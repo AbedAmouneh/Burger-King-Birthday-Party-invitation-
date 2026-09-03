@@ -24,7 +24,8 @@ function toCsv(rows: Rsvp[]): string {
 /**
  * Hidden behind the #royal hash and a passphrase. The passphrase is checked in
  * a server action against ADMIN_PASSPHRASE, so it never ships to the browser.
- * This is friction, not security: anyone who guesses "meow" is in.
+ * This is friction, not security, and the passphrase lives only in the
+ * ADMIN_PASSPHRASE environment variable, never in this repository.
  */
 export function AdminPanel() {
   const [open, setOpen] = useState(false);
