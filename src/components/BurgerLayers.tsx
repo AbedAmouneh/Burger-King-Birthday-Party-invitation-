@@ -12,9 +12,79 @@ const SW = 7;
 
 type LayerProps = { className?: string };
 
+/**
+ * One birthday candle. Two of them turn the Whopper into the cake, which is
+ * the whole point: without these the hero reads as lunch, not a party.
+ */
+function Candle({
+  x,
+  height,
+  stripe,
+  delay,
+}: {
+  x: number;
+  height: number;
+  stripe: string;
+  delay: string;
+}) {
+  const top = -height;
+  return (
+    <g>
+      {/* wax */}
+      <rect
+        x={x - 14}
+        y={top}
+        width="28"
+        height={height + 20}
+        rx="9"
+        fill="#fdf1dc"
+        stroke={OUTLINE}
+        strokeWidth="6"
+      />
+      {/* barber stripes */}
+      <g stroke={stripe} strokeWidth="8" strokeLinecap="round">
+        <path d={`M${x - 10} ${top + 18} L${x + 10} ${top + 7}`} />
+        <path d={`M${x - 10} ${top + 40} L${x + 10} ${top + 29}`} />
+        <path d={`M${x - 10} ${top + 62} L${x + 10} ${top + 51}`} />
+      </g>
+      {/* wick */}
+      <path
+        d={`M${x} ${top} L${x} ${top - 4}`}
+        stroke={OUTLINE}
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
+      {/* flame, drawn from its own base so the flicker scales about the wick */}
+      <g
+        className="candle-flame"
+        style={{ transformOrigin: `${x}px ${top - 9}px`, animationDelay: delay }}
+      >
+        <path
+          d={`M${x} ${top - 46} C${x + 17} ${top - 30} ${x + 15} ${top - 13} ${x} ${top - 8}
+              C${x - 15} ${top - 13} ${x - 17} ${top - 30} ${x} ${top - 46} Z`}
+          fill="#f5821f"
+          stroke={OUTLINE}
+          strokeWidth="5"
+          strokeLinejoin="round"
+        />
+        <path
+          d={`M${x} ${top - 33} C${x + 8} ${top - 25} ${x + 7} ${top - 16} ${x} ${top - 13}
+              C${x - 7} ${top - 16} ${x - 8} ${top - 25} ${x} ${top - 33} Z`}
+          fill="#ffc72c"
+        />
+      </g>
+    </g>
+  );
+}
+
 export function TopBun({ className }: LayerProps) {
   return (
-    <svg viewBox="0 0 400 132" className={className} aria-hidden="true">
+    // The viewBox extends above the bun to make room for the candles, so they
+    // travel with this layer when the scroll pulls the burger apart.
+    <svg viewBox="0 -104 400 236" className={className} aria-hidden="true">
+      <Candle x={152} height={74} stripe="#d62300" delay="0s" />
+      <Candle x={248} height={62} stripe="#1e3a8a" delay="0.45s" />
+
       {/* dome */}
       <path
         d="M14 124 C14 52 88 12 200 12 C312 12 386 52 386 124 Z"
@@ -142,7 +212,7 @@ export function BottomBun({ className }: LayerProps) {
 
 /** Top to bottom, with the aspect ratio each layer needs to keep its shape. */
 export const BURGER_LAYERS = [
-  { key: "top-bun", Component: TopBun, ratio: 400 / 132 },
+  { key: "top-bun", Component: TopBun, ratio: 400 / 236 },
   { key: "lettuce", Component: Lettuce, ratio: 400 / 58 },
   { key: "tomato", Component: Tomato, ratio: 400 / 48 },
   { key: "cheese", Component: Cheese, ratio: 400 / 62 },
