@@ -19,7 +19,7 @@ Fill in:
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → Data API |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API keys → `anon` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API keys → `service_role` |
-| `ADMIN_PASSPHRASE` | `meow` |
+| `ADMIN_PASSPHRASE` | any phrase you choose; it gates the `#royal` admin view |
 | `NEXT_PUBLIC_SITE_URL` | leave blank |
 
 Then:
@@ -56,6 +56,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY
 ADMIN_PASSPHRASE
 ```
+
+This repository is public, so never commit the passphrase or either Supabase
+key. They belong in `.env.local` locally and in Vercel's environment variables
+in production, nowhere else.
 
 `SUPABASE_SERVICE_ROLE_KEY` and `ADMIN_PASSPHRASE` are server-only. Do not
 prefix either with `NEXT_PUBLIC_`, or they will be bundled into the JavaScript
