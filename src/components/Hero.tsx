@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import {
   motion,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -21,9 +22,13 @@ import polaBkCrown from "../../public/photos/polaroid-bk-crown.webp";
 
 /**
  * Per-layer stacking. `tuck` is how far a layer slides under the one above it,
- * as a fraction of its OWN height; `z` is paint order (fillings in front of
- * the buns so the lettuce frills stick out); `split` is how far it travels,
- * in burger-widths, when the scroll pulls the burger apart.
+ * as a fraction of its OWN height; `z` is paint order (fillings in front of the
+ * buns so the lettuce frills stick out); `split` is how far it travels, in
+ * burger-widths, when the scroll pulls the burger apart.
+ *
+ * The split moves the burger into TWO groups rather than spreading all six
+ * layers evenly: even spreading leaves six thin gaps and the reveal photo ends
+ * up behind the fillings, whereas two groups open one clean window for it.
  *
  * Careful with `tuck`: a percentage margin-top resolves against the containing
  * block's WIDTH, not height. Since height = width / ratio, a tuck of `f`
@@ -31,9 +36,6 @@ import polaBkCrown from "../../public/photos/polaroid-bk-crown.webp";
  */
 const LAYER_STYLE: Record<string, { tuck: number; z: number; split: number }> =
   {
-    // The split moves the burger into TWO groups rather than spreading all six
-    // layers evenly. Even spreading leaves six thin gaps and the reveal photo
-    // ends up behind the fillings; two groups open one clean window for it.
     "top-bun": { tuck: 0, z: 2, split: -0.62 },
     lettuce: { tuck: 0.3, z: 6, split: -0.5 },
     tomato: { tuck: 0.22, z: 5, split: 0.34 },
@@ -45,9 +47,9 @@ const LAYER_STYLE: Record<string, { tuck: number; z: number; split: number }> =
 const BURGER_WIDTH_PX = 336;
 
 /**
- * One slice of the burger. This is its own component so each layer can call
- * useTransform for itself; calling a hook inside a .map() callback would break
- * the rules of hooks.
+ * One slice of the burger. Its own component so each layer can call
+ * useTransform for itself; a hook inside a .map() callback would break the
+ * rules of hooks.
  */
 function BurgerLayer({
   layer,
@@ -80,6 +82,7 @@ export function Hero() {
   const reduceMotion = useReducedMotion();
   const { play } = useSound();
   const sectionRef = useRef<HTMLElement>(null);
+  const scopeRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -89,17 +92,17 @@ export function Hero() {
   // Reduced motion still gets the reveal, just a much shorter journey.
   const travel = reduceMotion ? 0.3 : 1;
 
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.22], [1, 0]);
-  const headerY = useTransform(scrollYProgress, [0, 0.3], [0, -40]);
-  // Opening the burger makes it much taller, so shrink it on the way to keep
-  // the whole thing inside one viewport.
+  // Transforms stay with Framer (they track scroll exactly). Opacity does not:
+  // see the note on the fade-* classes in globals.css. Publishing progress as
+  // a CSS variable lets plain CSS derive every fade from the real scroll value.
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    scopeRef.current?.style.setProperty("--p", v.toFixed(4));
+  });
+
   const burgerScale = useTransform(scrollYProgress, [0, 1], [1, 0.78]);
-  const photoOpacity = useTransform(scrollYProgress, [0.12, 0.45], [0, 1]);
   const photoScale = useTransform(scrollYProgress, [0.12, 0.55], [0.86, 1]);
   // The burger box centre is not the split window centre; nudge up to match.
   const photoY = useTransform(scrollYProgress, [0, 1], [0, -34]);
-  const stickerOpacity = useTransform(scrollYProgress, [0.55, 0.85], [0, 1]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
 
   function press() {
     setSquished(true);
@@ -114,11 +117,12 @@ export function Hero() {
 
   return (
     <section ref={sectionRef} className="relative h-[260vh]">
-      <div className="paper sticky top-0 flex h-dvh flex-col items-center justify-center gap-3 overflow-hidden bg-cream px-5 py-8">
-        <motion.header
-          style={{ opacity: headerOpacity, y: headerY }}
-          className="flex flex-col items-center gap-2 text-center"
-        >
+      <div
+        ref={scopeRef}
+        data-scroll-scope
+        className="paper sticky top-0 flex h-dvh flex-col items-center justify-center gap-3 overflow-hidden bg-cream px-5 py-8"
+      >
+        <header className="fade-out-early flex flex-col items-center gap-2 text-center">
           <p className="font-pixel rounded-sm bg-royal px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-cream uppercase">
             {copy.hero.eyebrow}
           </p>
@@ -128,7 +132,7 @@ export function Hero() {
           <p className="font-display mt-1 text-lg text-brown">
             {copy.hero.tagline}
           </p>
-        </motion.header>
+        </header>
 
         <div
           className="relative w-full"
@@ -136,8 +140,8 @@ export function Hero() {
         >
           {/* Revealed between the layers as they part. */}
           <motion.div
-            style={{ opacity: photoOpacity, scale: photoScale, y: photoY }}
-            className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
+            style={{ scale: photoScale, y: photoY }}
+            className="fade-in-reveal pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
           >
             {/* The window the split opens is landscape, so the portrait
                 original is cropped to fill it rather than shrunk to a stamp.
@@ -171,10 +175,7 @@ export function Hero() {
             onPointerLeave={release}
             onPointerCancel={release}
           >
-            <motion.div
-              style={{ scale: burgerScale }}
-              className="origin-center"
-            >
+            <motion.div style={{ scale: burgerScale }} className="origin-center">
               {/* The squish is a CSS transition, not a JS spring: it runs on
                   the compositor, so it never contends with the scroll-linked
                   split for main-thread frames. */}
@@ -197,55 +198,38 @@ export function Hero() {
           </button>
         </div>
 
-        <Sticker
-          rotate={-18}
-          width={54}
-          className="absolute top-[6%] left-1 z-0"
-        >
+        <Sticker rotate={-18} width={54} className="absolute top-[6%] left-1 z-0">
           <Fries className="w-full" />
         </Sticker>
-        <Sticker
-          rotate={20}
-          width={52}
-          className="absolute top-[4%] right-2 z-0"
-        >
+        <Sticker rotate={20} width={52} className="absolute top-[4%] right-2 z-0">
           <Nugget className="w-full" />
         </Sticker>
 
         {/* Polaroids are pinned to the viewport, not the burger box: the box
             does not move when the layers split, so corner-anchoring inside it
             would drop them straight onto the reveal photo. */}
-        <motion.div
-          style={{ opacity: stickerOpacity }}
-          className="pointer-events-none absolute top-[11%] right-1 z-20"
-        >
+        <div className="fade-in-late pointer-events-none absolute top-[11%] right-1 z-20">
           <Polaroid
             src={polaBkCrown}
             alt="Lynn wearing a paper crown, with Abed"
             caption={copy.reveal.polaroids.bkCrown}
             rotate={6}
-            width={104}
+            width={116}
             className="pointer-events-auto"
           />
-        </motion.div>
-        <motion.div
-          style={{ opacity: stickerOpacity }}
-          className="pointer-events-none absolute bottom-[7%] left-1 z-20"
-        >
+        </div>
+        <div className="fade-in-late pointer-events-none absolute bottom-[7%] left-1 z-20">
           <Polaroid
             src={polaCampfire}
             alt="Abed and Lynn by a campfire at night"
             caption={copy.reveal.polaroids.campfire}
             rotate={-7}
-            width={104}
+            width={116}
             className="pointer-events-auto"
           />
-        </motion.div>
+        </div>
 
-        {/* The pulse lives on an inner span: a CSS animation on `opacity`
-            outranks an inline style, so pulsing the same element Framer is
-            fading would pin it visible. Nested, the two opacities multiply. */}
-        <motion.div style={{ opacity: hintOpacity }} className="relative">
+        <div className="fade-out-immediate">
           <div className="animate-squish-hint relative flex h-[6.4rem] w-[6.4rem] items-center justify-center">
             <Starburst
               points={12}
@@ -256,7 +240,7 @@ export function Hero() {
               {copy.hero.squishHint}
             </span>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
