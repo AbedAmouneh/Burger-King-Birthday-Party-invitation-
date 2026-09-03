@@ -51,7 +51,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Pixel font is tiny and dense; give it room to breathe wherever it is used. */
+/* Pixel font is tiny and dense; give it room to breathe wherever it is used.
+   10px is the floor: Press Start 2P has an unusually large cap-height for its
+   em, so 10px inks 8.75px tall, above the 8.46px of system-ui at 12px, which is
+   the size Lighthouse treats as the legibility threshold. Below 10px it really
+   does become hard to read on a phone. */
 .font-pixel,
 [class*="font-pixel"] {
   letter-spacing: 0.02em;
@@ -82,4 +86,62 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ---- 90s print texture -------------------------------------------------
+   A tray liner was cheap offset printing: visible halftone dots and a slight
+   paper tooth. Both are pure CSS gradients, so they cost no bytes and scale
+   to any section size. */
+.halftone {
+  background-image: radial-gradient(
+    circle at center,
+    rgb(0 0 0 / 0.16) 1.1px,
+    transparent 1.2px
+  );
+  background-size: 7px 7px;
+}
+
+.halftone-light {
+  background-image: radial-gradient(
+    circle at center,
+    rgb(255 255 255 / 0.14) 1.1px,
+    transparent 1.2px
+  );
+  background-size: 7px 7px;
+}
+
+/* Paper tooth: two very low-contrast diagonal grains crossing. */
+.paper {
+  background-image:
+    repeating-linear-gradient(
+      48deg,
+      rgb(80 35 20 / 0.035) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      -42deg,
+      rgb(80 35 20 / 0.028) 0 1px,
+      transparent 1px 4px
+    );
+}
+
+/* Hard offset shadow, the way flat 90s print art faked depth. */
+.hard-shadow {
+  box-shadow: 5px 5px 0 var(--color-brown);
+}
+
+/* The squeeze prompt breathes rather than blinks: scaling keeps the starburst
+   fully opaque, so it never washes out against the cream. */
+@keyframes squish-hint {
+  0%,
+  100% {
+    transform: scale(1) rotate(-3deg);
+  }
+  50% {
+    transform: scale(1.08) rotate(3deg);
+  }
+}
+
+.animate-squish-hint {
+  animation: squish-hint 1.8s var(--ease-back) infinite;
 }
