@@ -12,6 +12,16 @@ create table if not exists public.rsvps (
   created_at timestamptz not null default now()
 );
 
+-- Lets a guest edit the crown they created, with no accounts involved.
+--
+-- This stores a SHA-256 HASH, never the token itself. Realtime broadcasts the
+-- whole row to every subscriber, so a plaintext token here would hand every
+-- viewer the ability to edit every other guest's entry. The browser keeps the
+-- plaintext in localStorage; the server action hashes what it is given and
+-- compares. A leaked digest authorises nothing.
+alter table public.rsvps
+  add column if not exists edit_token_hash text;
+
 -- Guest rails. Keeps a troll from pasting a novel onto the crown wall.
 do $$
 begin
@@ -66,8 +76,13 @@ create policy rsvps_public_insert
 -- key (service_role bypasses RLS) after checking ADMIN_PASSPHRASE.
 
 -- Least privilege at the GRANT layer too, as a second line of defence.
+-- Column-level grants keep the digest out of ordinary reads; anon may write it
+-- on insert but never select it back.
 revoke all on public.rsvps from anon, authenticated;
-grant select, insert on public.rsvps to anon, authenticated;
+grant select (id, name, coming, message, created_at)
+  on public.rsvps to anon, authenticated;
+grant insert (name, coming, message, edit_token_hash)
+  on public.rsvps to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Realtime — live crown wall
