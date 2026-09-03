@@ -79,9 +79,12 @@ function Candle({
 
 export function TopBun({ className }: LayerProps) {
   return (
-    // The viewBox extends above the bun to make room for the candles, so they
-    // travel with this layer when the scroll pulls the burger apart.
-    <svg viewBox="0 -104 400 236" className={className} aria-hidden="true">
+    // The viewBox extends above the bun so the candles travel with this layer
+    // when the scroll pulls the burger apart. The top must clear the TALLEST
+    // flame tip, which sits at -(candle height) - 46; with a 74-unit candle
+    // that is y = -120, so -134 leaves a little margin. Raise a candle and
+    // this number has to move with it or the flame gets clipped.
+    <svg viewBox="0 -134 400 266" className={className} aria-hidden="true">
       <Candle x={152} height={74} stripe="#d62300" delay="0s" />
       <Candle x={248} height={62} stripe="#1e3a8a" delay="0.45s" />
 
@@ -212,7 +215,7 @@ export function BottomBun({ className }: LayerProps) {
 
 /** Top to bottom, with the aspect ratio each layer needs to keep its shape. */
 export const BURGER_LAYERS = [
-  { key: "top-bun", Component: TopBun, ratio: 400 / 236 },
+  { key: "top-bun", Component: TopBun, ratio: 400 / 266 },
   { key: "lettuce", Component: Lettuce, ratio: 400 / 58 },
   { key: "tomato", Component: Tomato, ratio: 400 / 48 },
   { key: "cheese", Component: Cheese, ratio: 400 / 62 },
