@@ -12,7 +12,7 @@ export const copy = {
     title: "Double Crown",
     tagline: "Two birthdays. One burger. Yalla.",
     squishHint: "Squeeze it. Ma tkhaf.",
-    scrollHint: "Keep scrolling",
+    scrollHint: "Scroll down",
   },
 
   reveal: {
@@ -20,6 +20,8 @@ export const copy = {
     polaroids: {
       campfire: "before the crowns",
       bkCrown: "she found the crown first",
+      restaurant: "sa7tein",
+      indoor: "el thenein",
     },
   },
 
@@ -38,6 +40,8 @@ export const copy = {
       "Covers your kids meal, a toy, animation, face paint, and a character.",
     tributePayment: 'Cash at the door. No cards, no "ba3dein".',
     closer: "Yalla, menshoufkon.",
+    reserveSpot: "Reserve your spot",
+    reserveSpotFranco: "Hjoz mahalak",
     addToCalendar: "Add to calendar",
     openInMaps: "Open in maps",
   },
