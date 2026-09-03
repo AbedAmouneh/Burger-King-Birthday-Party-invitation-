@@ -120,125 +120,144 @@ export function Hero() {
       <div
         ref={scopeRef}
         data-scroll-scope
-        className="paper sticky top-0 flex h-dvh flex-col items-center justify-center gap-3 overflow-hidden bg-cream px-5 py-8"
+        className="paper sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-cream px-5 py-8"
       >
-        <header className="fade-out-early flex flex-col items-center gap-2 text-center">
-          <p className="font-pixel rounded-sm bg-royal px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-cream uppercase">
-            {copy.hero.eyebrow}
-          </p>
-          <h1 className="font-display -rotate-[2deg] bg-flame px-3 py-1 text-[2.9rem] leading-[0.95] text-cream uppercase shadow-[5px_5px_0_var(--color-brown)]">
-            {copy.hero.title}
-          </h1>
-          <p className="font-display mt-1 text-lg text-brown">
-            {copy.hero.tagline}
-          </p>
-        </header>
+        {/* Everything, stickers included, lives in one centred column. The
+            polaroids and sticker art are absolutely positioned; anchoring them
+            to the sticky container instead would fling them to the viewport
+            corners on a wide screen, far from the burger. */}
+        <div className="relative flex w-full max-w-[26rem] flex-col items-center gap-3">
+          <header className="fade-out-early flex flex-col items-center gap-2 text-center">
+            <p className="font-pixel rounded-sm bg-royal px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-cream uppercase">
+              {copy.hero.eyebrow}
+            </p>
+            <h1 className="font-display -rotate-[2deg] bg-flame px-3 py-1 text-[2.9rem] leading-[0.95] text-cream uppercase shadow-[5px_5px_0_var(--color-brown)]">
+              {copy.hero.title}
+            </h1>
+            <p className="font-display mt-1 text-lg text-brown">
+              {copy.hero.tagline}
+            </p>
+          </header>
 
-        <div
-          className="relative w-full"
-          style={{ maxWidth: `${BURGER_WIDTH_PX}px` }}
-        >
-          {/* Revealed between the layers as they part. */}
-          <motion.div
-            style={{ scale: photoScale, y: photoY }}
-            className="fade-in-reveal pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
+          <div
+            className="relative w-full"
+            style={{ maxWidth: `${BURGER_WIDTH_PX}px` }}
           >
-            {/* The window the split opens is landscape, so the portrait
+            {/* Revealed between the layers as they part. */}
+            <motion.div
+              style={{ scale: photoScale, y: photoY }}
+              className="fade-in-reveal pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
+            >
+              {/* The window the split opens is landscape, so the portrait
                 original is cropped to fill it rather than shrunk to a stamp.
                 objectPosition biases upward to keep both faces in frame. */}
-            <div className="relative w-[84%] rotate-[-2deg] bg-white p-1.5 pb-5 shadow-[0_8px_20px_rgba(80,35,20,0.4)]">
-              <div className="relative h-[178px] w-full">
-                <Image
-                  src={heroMirror}
-                  alt="Abed and Lynn in a Burger King kiosk mirror"
-                  placeholder="blur"
-                  fill
-                  sizes="320px"
-                  priority
-                  className="object-cover"
-                  style={{ objectPosition: "center 26%" }}
-                />
-              </div>
-              <p className="font-pixel absolute inset-x-0 bottom-1 text-center text-[10px] text-royal uppercase">
-                {copy.reveal.caption}
-              </p>
-            </div>
-          </motion.div>
-
-          <button
-            type="button"
-            aria-label={copy.hero.squishHint}
-            data-squished={squished}
-            className="relative block w-full cursor-pointer touch-manipulation select-none"
-            onPointerDown={press}
-            onPointerUp={release}
-            onPointerLeave={release}
-            onPointerCancel={release}
-          >
-            <motion.div style={{ scale: burgerScale }} className="origin-center">
-              {/* The squish is a CSS transition, not a JS spring: it runs on
-                  the compositor, so it never contends with the scroll-linked
-                  split for main-thread frames. */}
-              <div
-                className="origin-bottom transition-transform duration-200 [transition-timing-function:var(--ease-back)] motion-reduce:transition-none"
-                style={{
-                  transform: squished ? "scaleY(0.74) scaleX(1.08)" : undefined,
-                }}
-              >
-                {BURGER_LAYERS.map((layer) => (
-                  <BurgerLayer
-                    key={layer.key}
-                    layer={layer}
-                    progress={scrollYProgress}
-                    travel={travel}
+              <div className="relative w-[84%] rotate-[-2deg] bg-white p-1.5 pb-5 shadow-[0_8px_20px_rgba(80,35,20,0.4)]">
+                <div className="relative h-[178px] w-full">
+                  <Image
+                    src={heroMirror}
+                    alt="Abed and Lynn in a Burger King kiosk mirror"
+                    placeholder="blur"
+                    fill
+                    sizes="320px"
+                    priority
+                    className="object-cover"
+                    style={{ objectPosition: "center 26%" }}
                   />
-                ))}
+                </div>
+                <p className="font-pixel absolute inset-x-0 bottom-1 text-center text-[10px] text-royal uppercase">
+                  {copy.reveal.caption}
+                </p>
               </div>
             </motion.div>
-          </button>
-        </div>
 
-        <Sticker rotate={-18} width={54} className="absolute top-[6%] left-1 z-0">
-          <Fries className="w-full" />
-        </Sticker>
-        <Sticker rotate={20} width={52} className="absolute top-[4%] right-2 z-0">
-          <Nugget className="w-full" />
-        </Sticker>
+            <button
+              type="button"
+              aria-label={copy.hero.squishHint}
+              data-squished={squished}
+              className="relative block w-full cursor-pointer touch-manipulation select-none"
+              onPointerDown={press}
+              onPointerUp={release}
+              onPointerLeave={release}
+              onPointerCancel={release}
+            >
+              <motion.div
+                style={{ scale: burgerScale }}
+                className="origin-center"
+              >
+                {/* The squish is a CSS transition, not a JS spring: it runs on
+                  the compositor, so it never contends with the scroll-linked
+                  split for main-thread frames. */}
+                <div
+                  className="origin-bottom transition-transform duration-200 [transition-timing-function:var(--ease-back)] motion-reduce:transition-none"
+                  style={{
+                    transform: squished
+                      ? "scaleY(0.74) scaleX(1.08)"
+                      : undefined,
+                  }}
+                >
+                  {BURGER_LAYERS.map((layer) => (
+                    <BurgerLayer
+                      key={layer.key}
+                      layer={layer}
+                      progress={scrollYProgress}
+                      travel={travel}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </button>
+          </div>
 
-        {/* Polaroids are pinned to the viewport, not the burger box: the box
+          <Sticker
+            rotate={-18}
+            width={54}
+            className="absolute top-[6%] left-1 z-0"
+          >
+            <Fries className="w-full" />
+          </Sticker>
+          <Sticker
+            rotate={20}
+            width={52}
+            className="absolute top-[4%] right-2 z-0"
+          >
+            <Nugget className="w-full" />
+          </Sticker>
+
+          {/* Polaroids are pinned to the viewport, not the burger box: the box
             does not move when the layers split, so corner-anchoring inside it
             would drop them straight onto the reveal photo. */}
-        <div className="fade-in-late pointer-events-none absolute top-[11%] right-1 z-20">
-          <Polaroid
-            src={polaBkCrown}
-            alt="Lynn wearing a paper crown, with Abed"
-            caption={copy.reveal.polaroids.bkCrown}
-            rotate={6}
-            width={116}
-            className="pointer-events-auto"
-          />
-        </div>
-        <div className="fade-in-late pointer-events-none absolute bottom-[7%] left-1 z-20">
-          <Polaroid
-            src={polaCampfire}
-            alt="Abed and Lynn by a campfire at night"
-            caption={copy.reveal.polaroids.campfire}
-            rotate={-7}
-            width={116}
-            className="pointer-events-auto"
-          />
-        </div>
-
-        <div className="fade-out-immediate">
-          <div className="animate-squish-hint relative flex h-[6.4rem] w-[6.4rem] items-center justify-center">
-            <Starburst
-              points={12}
-              fill="var(--color-flame)"
-              className="absolute inset-0 h-full w-full drop-shadow-[0_3px_0_rgba(61,27,14,0.35)]"
+          <div className="fade-in-late pointer-events-none absolute top-[11%] right-1 z-20">
+            <Polaroid
+              src={polaBkCrown}
+              alt="Lynn wearing a paper crown, with Abed"
+              caption={copy.reveal.polaroids.bkCrown}
+              rotate={6}
+              width={116}
+              className="pointer-events-auto"
             />
-            <span className="font-pixel relative -rotate-[8deg] px-4 text-center text-[10px] leading-[1.6] text-cream uppercase">
-              {copy.hero.squishHint}
-            </span>
+          </div>
+          <div className="fade-in-late pointer-events-none absolute bottom-[7%] left-1 z-20">
+            <Polaroid
+              src={polaCampfire}
+              alt="Abed and Lynn by a campfire at night"
+              caption={copy.reveal.polaroids.campfire}
+              rotate={-7}
+              width={116}
+              className="pointer-events-auto"
+            />
+          </div>
+
+          <div className="fade-out-immediate">
+            <div className="animate-squish-hint relative flex h-[6.4rem] w-[6.4rem] items-center justify-center">
+              <Starburst
+                points={12}
+                fill="var(--color-flame)"
+                className="absolute inset-0 h-full w-full drop-shadow-[0_3px_0_rgba(61,27,14,0.35)]"
+              />
+              <span className="font-pixel relative -rotate-[8deg] px-4 text-center text-[10px] leading-[1.6] text-cream uppercase">
+                {copy.hero.squishHint}
+              </span>
+            </div>
           </div>
         </div>
       </div>
