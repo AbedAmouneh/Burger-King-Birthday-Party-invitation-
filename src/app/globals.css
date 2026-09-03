@@ -145,3 +145,36 @@ button {
 .animate-squish-hint {
   animation: squish-hint 1.8s var(--ease-back) infinite;
 }
+
+/* ---- Scroll-linked fades -----------------------------------------------
+   Framer Motion drives `opacity` through the Web Animations API, which runs
+   the value as a timed animation rather than setting it: the computed opacity
+   then drifts away from the scroll position instead of tracking it. Transforms
+   are unaffected, so those stay with Framer.
+
+   Instead the hero writes one custom property, --p (scroll progress 0..1), and
+   these classes derive their opacity from it in pure CSS. No animation
+   involved, so the value is exactly the scroll position, always. */
+[data-scroll-scope] {
+  --p: 0;
+}
+
+/* Fades OUT across [0, 0.22] */
+.fade-out-early {
+  opacity: clamp(0, calc((0.22 - var(--p)) / 0.22), 1);
+}
+
+/* Fades OUT across [0, 0.12] */
+.fade-out-immediate {
+  opacity: clamp(0, calc((0.12 - var(--p)) / 0.12), 1);
+}
+
+/* Fades IN across [0.12, 0.45] */
+.fade-in-reveal {
+  opacity: clamp(0, calc((var(--p) - 0.12) / 0.33), 1);
+}
+
+/* Fades IN across [0.55, 0.85] */
+.fade-in-late {
+  opacity: clamp(0, calc((var(--p) - 0.55) / 0.3), 1);
+}
