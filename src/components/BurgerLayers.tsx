@@ -20,12 +20,13 @@ function Candle({
   x,
   height,
   stripe,
-  delay,
+  lightAt,
 }: {
   x: number;
   height: number;
   stripe: string;
-  delay: string;
+  /** When this wick catches, in the page's arrival sequence. */
+  lightAt: number;
 }) {
   const top = -height;
   return (
@@ -57,7 +58,13 @@ function Candle({
       {/* flame, drawn from its own base so the flicker scales about the wick */}
       <g
         className="candle-flame"
-        style={{ transformOrigin: `${x}px ${top - 9}px`, animationDelay: delay }}
+        style={
+          {
+            transformOrigin: `${x}px ${top - 9}px`,
+            "--light-at": `${lightAt}s`,
+            "--flicker-at": `${lightAt + 0.5}s`,
+          } as React.CSSProperties
+        }
       >
         <path
           d={`M${x} ${top - 46} C${x + 17} ${top - 30} ${x + 15} ${top - 13} ${x} ${top - 8}
@@ -85,8 +92,8 @@ export function TopBun({ className }: LayerProps) {
     // that is y = -120, so -134 leaves a little margin. Raise a candle and
     // this number has to move with it or the flame gets clipped.
     <svg viewBox="0 -134 400 266" className={className} aria-hidden="true">
-      <Candle x={152} height={74} stripe="#d62300" delay="0s" />
-      <Candle x={248} height={62} stripe="#1e3a8a" delay="0.45s" />
+      <Candle x={152} height={74} stripe="#d62300" lightAt={1.05} />
+      <Candle x={248} height={62} stripe="#1e3a8a" lightAt={1.32} />
 
       {/* dome */}
       <path
