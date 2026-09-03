@@ -51,7 +51,7 @@ export function Polaroid({
         sizes="140px"
         className="h-auto w-full"
       />
-      <figcaption className="font-pixel absolute inset-x-0 bottom-1 text-center text-[6px] text-brown/80">
+      <figcaption className="font-pixel absolute inset-x-0 bottom-1 text-center text-[10px] text-brown/80">
         {caption}
       </figcaption>
     </figure>
