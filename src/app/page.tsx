@@ -1,4 +1,5 @@
 import { AdminPanel } from "@/components/AdminPanel";
+import { Chase } from "@/components/Chase";
 import { Court } from "@/components/Court";
 import { Decree } from "@/components/Decree";
 import { Footer } from "@/components/Footer";
@@ -12,6 +13,7 @@ export default function Home() {
       <Decree />
       <Court />
       <Footer />
+      <Chase />
       <MuteToggle />
       <AdminPanel />
     </main>
