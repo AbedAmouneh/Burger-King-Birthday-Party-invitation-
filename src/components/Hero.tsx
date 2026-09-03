@@ -149,21 +149,33 @@ export function Hero() {
             corners on a wide screen, far from the burger. */}
         <div className="relative flex w-full max-w-[26rem] flex-col items-center gap-2">
           <header className="fade-out-early flex flex-col items-center gap-2 text-center">
-            <p className="font-pixel rounded-sm bg-royal px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-cream uppercase">
+            <p className="enter-rise font-pixel rounded-sm bg-royal px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-cream uppercase">
               {copy.hero.eyebrow}
             </p>
-            <h1 className="font-display -rotate-[2deg] bg-flame px-3 py-1 text-[2.9rem] leading-[0.95] text-cream uppercase shadow-[5px_5px_0_var(--color-brown)]">
+            <h1
+              className="enter-drop font-display bg-flame px-3 py-1 text-[2.9rem] leading-[0.95] text-cream uppercase shadow-[5px_5px_0_var(--color-brown)]"
+              style={{ animationDelay: "0.1s", rotate: "-2deg" }}
+            >
               {copy.hero.title}
             </h1>
             {/* Whose birthday it is, said plainly. Without this the hero was a
                 burger and a royal joke with no occasion attached to it. */}
-            <p className="font-display mt-1 text-[1.7rem] leading-none text-royal">
+            <p
+              className="enter-rise font-display mt-1 text-[1.7rem] leading-none text-royal"
+              style={{ animationDelay: "0.42s" }}
+            >
               {copy.hero.names}
             </p>
-            <p className="font-pixel text-[10px] tracking-[0.12em] text-brown/80 uppercase">
+            <p
+              className="enter-rise font-pixel text-[10px] tracking-[0.12em] text-brown/80 uppercase"
+              style={{ animationDelay: "0.54s" }}
+            >
               {copy.hero.birthdayLine}
             </p>
-            <p className="font-display mt-0.5 text-lg text-brown">
+            <p
+              className="enter-rise font-display mt-0.5 text-lg text-brown"
+              style={{ animationDelay: "0.64s" }}
+            >
               {copy.hero.tagline}
             </p>
           </header>
@@ -209,7 +221,8 @@ export function Hero() {
               type="button"
               aria-label={copy.hero.squishHint}
               data-squished={squished}
-              className="relative block w-full cursor-pointer touch-manipulation select-none"
+              className="enter-burger relative block w-full cursor-pointer touch-manipulation select-none"
+              style={{ animationDelay: "0.5s" }}
               onPointerDown={press}
               onPointerUp={release}
               onPointerLeave={release}
@@ -247,6 +260,9 @@ export function Hero() {
           <Sticker
             rotate={-18}
             width={54}
+            idle="bob"
+            delay={0}
+            enterAt={0.95}
             className="absolute top-[6%] left-1 z-0"
           >
             <Fries className="w-full" />
@@ -254,6 +270,9 @@ export function Hero() {
           <Sticker
             rotate={11}
             width={64}
+            idle="sway"
+            delay={0.7}
+            enterAt={1.1}
             className="absolute top-[54%] right-0 z-0"
           >
             <Balloons className="w-full" />
@@ -261,6 +280,9 @@ export function Hero() {
           <Sticker
             rotate={20}
             width={52}
+            idle="bob"
+            delay={1.4}
+            enterAt={1.05}
             className="absolute top-[4%] right-2 z-0"
           >
             <Nugget className="w-full" />
@@ -291,15 +313,20 @@ export function Hero() {
           </div>
 
           <div className="fade-out-immediate">
-            <div className="animate-squish-hint relative flex h-[5.9rem] w-[5.9rem] items-center justify-center">
-              <Starburst
-                points={12}
-                fill="var(--color-flame)"
-                className="absolute inset-0 h-full w-full drop-shadow-[0_3px_0_rgba(61,27,14,0.35)]"
-              />
-              <span className="font-pixel relative -rotate-[8deg] px-3 text-center text-[10px] leading-[1.45] text-cream uppercase">
-                {copy.hero.squishHint}
-              </span>
+            {/* Three nested elements on purpose: scroll fade, then arrival,
+                then the idle breathe. Stacked on one element, each animation
+                would overwrite the previous one's opacity. */}
+            <div className="enter-pop" style={{ animationDelay: "1.75s" }}>
+              <div className="animate-squish-hint relative flex h-[5.9rem] w-[5.9rem] items-center justify-center">
+                <Starburst
+                  points={12}
+                  fill="var(--color-flame)"
+                  className="absolute inset-0 h-full w-full drop-shadow-[0_3px_0_rgba(61,27,14,0.35)]"
+                />
+                <span className="font-pixel relative -rotate-[8deg] px-3 text-center text-[10px] leading-[1.45] text-cream uppercase">
+                  {copy.hero.squishHint}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -307,23 +334,33 @@ export function Hero() {
         {/* Sibling of the centred column, not a child: anchored here it hugs
             the bottom of the viewport rather than the column's own height. */}
         <div className="scroll-cue fade-out-early pointer-events-none absolute inset-x-0 bottom-6 flex flex-col items-center gap-1">
-          <span className="font-pixel text-[10px] tracking-[0.16em] text-brown/70 uppercase">
-            {copy.hero.scrollHint}
-          </span>
-          <svg
-            viewBox="0 0 24 14"
-            className="animate-scroll-nudge h-3 w-5"
-            aria-hidden="true"
+          {/* Label and chevron arrive together, on a wrapper: the chevron's
+              own nudge animation occupies its `animation` slot, so the
+              entrance has to live one level up. Last thing in, because it is
+              only worth suggesting once the hero has introduced itself. */}
+          <div
+            className="enter-rise flex flex-col items-center gap-1"
+            style={{ animationDelay: "2.1s" }}
           >
-            <path
-              d="M2 2 L12 11 L22 2"
-              fill="none"
-              stroke="var(--color-flame)"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+            <span className="font-pixel text-[10px] tracking-[0.16em] text-brown/70 uppercase">
+              {copy.hero.scrollHint}
+            </span>
+            <svg
+              viewBox="0 0 24 14"
+              className="animate-scroll-nudge h-3 w-5"
+              style={{ animationDelay: "2.5s" }}
+              aria-hidden="true"
+            >
+              <path
+                d="M2 2 L12 11 L22 2"
+                fill="none"
+                stroke="var(--color-flame)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
       </div>
     </section>
