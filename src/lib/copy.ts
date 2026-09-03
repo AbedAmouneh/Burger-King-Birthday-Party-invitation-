@@ -59,8 +59,15 @@ export const copy = {
     messageLabel: "A word for the crown",
     messagePlaceholder: "Optional",
     submit: "Claim my crown",
+    submitEdit: "Update my crown",
     submitting: "Claiming...",
     success: "Crown claimed. 3a2belak.",
+    successNotComing: "Noted. We'll miss you, habibi.",
+    changeAnswer: "Changed your mind?",
+    editingHint: "This device already claimed a crown. You can change your answer.",
+    comingRequired: "Pick one: Akid or La2.",
+    notConfigured:
+      "RSVP is not wired up yet. Add the Supabase keys to .env.local and restart the dev server.",
     duplicate: "This royal is already on the wall",
     errorGeneric: "Something broke. Try again in a second.",
     nameRequired: "The court needs a name.",
@@ -73,6 +80,8 @@ export const copy = {
     coming: "coming",
     notComing: "can't make it",
     empty: "No crowns yet. Be the first, ya batal.",
+    loading: "Counting the court...",
+    failed: "The wall is down for a second. Refresh and it should come back.",
   },
 
   footer: {
@@ -89,6 +98,8 @@ export const copy = {
     exportCsv: "Export CSV",
     deleteConfirm: "Remove this crown for good?",
     empty: "No crowns to rule over yet.",
+    remove: "Delete",
+    close: "Close",
   },
 
   sound: {
