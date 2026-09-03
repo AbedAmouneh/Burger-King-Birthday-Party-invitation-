@@ -31,7 +31,7 @@ export function Polaroid({
 
   return (
     <figure
-      className={`relative shrink-0 bg-white p-1.5 pb-6 shadow-[0_6px_14px_rgba(80,35,20,0.28)] ${className ?? ""}`}
+      className={`relative shrink-0 bg-white p-1.5 pb-7 shadow-[0_6px_14px_rgba(80,35,20,0.28)] ${className ?? ""}`}
       style={{ rotate: `${rotate}deg`, width: `${width}px` }}
       onPointerDown={() => play("squeak")}
     >
@@ -51,7 +51,7 @@ export function Polaroid({
         sizes="140px"
         className="h-auto w-full"
       />
-      <figcaption className="font-pixel absolute inset-x-0 bottom-1 text-center text-[10px] text-brown/80">
+      <figcaption className="font-display absolute inset-x-0 bottom-0.5 px-1 text-center text-[12px] leading-[1.1] text-brown/85">
         {caption}
       </figcaption>
     </figure>
