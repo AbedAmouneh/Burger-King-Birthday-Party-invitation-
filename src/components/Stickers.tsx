@@ -104,3 +104,23 @@ export function Starburst({
     </svg>
   );
 }
+
+export function Balloons({ className }: S) {
+  return (
+    <svg viewBox="0 0 110 150" className={className} aria-hidden="true">
+      {/* strings first, so the balloons sit over them */}
+      <g fill="none" stroke={O} strokeWidth="4" strokeLinecap="round">
+        <path d="M36 64 C30 92 44 112 40 144" />
+        <path d="M74 74 C80 100 64 118 70 146" />
+      </g>
+      <g stroke={O} strokeWidth={SW} strokeLinejoin="round">
+        <ellipse cx="36" cy="38" rx="30" ry="34" fill="#d62300" />
+        <path d="M30 70 L42 70 L36 80 Z" fill="#d62300" />
+        <ellipse cx="74" cy="50" rx="26" ry="30" fill="#1e3a8a" />
+        <path d="M69 78 L80 78 L74 88 Z" fill="#1e3a8a" />
+      </g>
+      <ellipse cx="26" cy="26" rx="8" ry="11" fill="#ff8a70" opacity="0.75" />
+      <ellipse cx="66" cy="40" rx="7" ry="9" fill="#6b8ad6" opacity="0.75" />
+    </svg>
+  );
+}
