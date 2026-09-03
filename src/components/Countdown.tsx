@@ -30,11 +30,13 @@ function remainingFrom(now: number): Remaining | null {
 
 function Cell({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex min-w-[3.9rem] flex-col items-center rounded-lg border-4 border-brown bg-brown px-2 py-2">
+    // Sits on the dark menu board, so the slot is darker than the board and
+    // outlined in yellow: brown-on-brown would disappear.
+    <div className="flex min-w-[3.9rem] flex-col items-center rounded-md border-[3px] border-yellow/70 bg-[#2b1008] px-2 py-2 shadow-[inset_0_0_16px_rgba(0,0,0,0.55)]">
       <span className="font-display text-3xl leading-none text-yellow tabular-nums">
         {value}
       </span>
-      <span className="font-pixel mt-1.5 text-[7px] tracking-widest text-cream/80 uppercase">
+      <span className="font-pixel mt-1.5 text-[10px] tracking-widest text-cream/70 uppercase">
         {label}
       </span>
     </div>
@@ -63,12 +65,12 @@ export function Countdown() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <h2 className="font-display text-2xl text-flame uppercase">
+      <h2 className="font-display text-2xl text-cream uppercase">
         {copy.countdown.heading}
       </h2>
 
       {mounted && remaining === null ? (
-        <p className="font-display text-xl text-royal">{copy.countdown.live}</p>
+        <p className="font-display text-xl text-yellow">{copy.countdown.live}</p>
       ) : (
         <div
           className="flex gap-2"
