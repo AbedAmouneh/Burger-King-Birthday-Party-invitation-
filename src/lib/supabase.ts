@@ -5,6 +5,18 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 let client: SupabaseClient | null = null;
 
 /**
+ * True when both public env vars are present. Lets the RSVP and wall show a
+ * clear "not wired up yet" notice instead of throwing a white screen at anyone
+ * who clones the repo before creating their Supabase project.
+ */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
+
+/**
  * Browser client, created lazily so a missing env var surfaces as a runtime
  * error in the one component that needs it rather than failing the whole build.
  * Carries the anon key, so it can only do what the RLS policies in
