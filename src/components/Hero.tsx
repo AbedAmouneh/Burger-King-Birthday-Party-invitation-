@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   motion,
@@ -13,7 +13,7 @@ import {
 import { BURGER_LAYERS } from "./BurgerLayers";
 import { Polaroid } from "./Polaroid";
 import { Sticker } from "./Sticker";
-import { Fries, Nugget, Starburst } from "./Stickers";
+import { Balloons, Fries, Nugget, Starburst } from "./Stickers";
 import { copy } from "@/lib/copy";
 import { useSound } from "@/lib/use-sound";
 import heroMirror from "../../public/photos/hero-mirror.webp";
@@ -44,7 +44,31 @@ const LAYER_STYLE: Record<string, { tuck: number; z: number; split: number }> =
     "bottom-bun": { tuck: 0.16, z: 1, split: 0.66 },
   };
 
-const BURGER_WIDTH_PX = 336;
+/** Widest the burger ever gets, on a tall screen. */
+const BURGER_MAX_PX = 292;
+
+/**
+ * The stack (candles included) is about 1.2x as tall as it is wide, and it has
+ * to share the viewport with the header, the squeeze prompt and the scroll cue.
+ * Tying its width to viewport height keeps all of that on screen on a short
+ * phone instead of pushing the prompt off the bottom.
+ *
+ * The same number drives the split distances, so the geometry stays consistent
+ * at any size.
+ */
+function useBurgerWidth(): number {
+  const [width, setWidth] = useState(BURGER_MAX_PX);
+
+  useEffect(() => {
+    const measure = () =>
+      setWidth(Math.min(BURGER_MAX_PX, Math.round(window.innerHeight * 0.37)));
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  return width;
+}
 
 /**
  * One slice of the burger. Its own component so each layer can call
@@ -55,17 +79,15 @@ function BurgerLayer({
   layer,
   progress,
   travel,
+  burgerWidth,
 }: {
   layer: (typeof BURGER_LAYERS)[number];
   progress: MotionValue<number>;
   travel: number;
+  burgerWidth: number;
 }) {
   const { tuck, z, split } = LAYER_STYLE[layer.key];
-  const y = useTransform(
-    progress,
-    [0, 1],
-    [0, split * BURGER_WIDTH_PX * travel],
-  );
+  const y = useTransform(progress, [0, 1], [0, split * burgerWidth * travel]);
 
   return (
     <motion.div
@@ -83,6 +105,7 @@ export function Hero() {
   const { play } = useSound();
   const sectionRef = useRef<HTMLElement>(null);
   const scopeRef = useRef<HTMLDivElement>(null);
+  const burgerWidth = useBurgerWidth();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -101,8 +124,6 @@ export function Hero() {
 
   const burgerScale = useTransform(scrollYProgress, [0, 1], [1, 0.78]);
   const photoScale = useTransform(scrollYProgress, [0.12, 0.55], [0.86, 1]);
-  // The burger box centre is not the split window centre; nudge up to match.
-  const photoY = useTransform(scrollYProgress, [0, 1], [0, -34]);
 
   function press() {
     setSquished(true);
@@ -120,13 +141,13 @@ export function Hero() {
       <div
         ref={scopeRef}
         data-scroll-scope
-        className="paper sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-cream px-5 py-8"
+        className="paper sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-cream px-5 py-4"
       >
         {/* Everything, stickers included, lives in one centred column. The
             polaroids and sticker art are absolutely positioned; anchoring them
             to the sticky container instead would fling them to the viewport
             corners on a wide screen, far from the burger. */}
-        <div className="relative flex w-full max-w-[26rem] flex-col items-center gap-3">
+        <div className="relative flex w-full max-w-[26rem] flex-col items-center gap-2">
           <header className="fade-out-early flex flex-col items-center gap-2 text-center">
             <p className="font-pixel rounded-sm bg-royal px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-cream uppercase">
               {copy.hero.eyebrow}
@@ -134,25 +155,39 @@ export function Hero() {
             <h1 className="font-display -rotate-[2deg] bg-flame px-3 py-1 text-[2.9rem] leading-[0.95] text-cream uppercase shadow-[5px_5px_0_var(--color-brown)]">
               {copy.hero.title}
             </h1>
-            <p className="font-display mt-1 text-lg text-brown">
+            {/* Whose birthday it is, said plainly. Without this the hero was a
+                burger and a royal joke with no occasion attached to it. */}
+            <p className="font-display mt-1 text-[1.7rem] leading-none text-royal">
+              {copy.hero.names}
+            </p>
+            <p className="font-pixel text-[10px] tracking-[0.12em] text-brown/80 uppercase">
+              {copy.hero.birthdayLine}
+            </p>
+            <p className="font-display mt-0.5 text-lg text-brown">
               {copy.hero.tagline}
             </p>
           </header>
 
           <div
             className="relative w-full"
-            style={{ maxWidth: `${BURGER_WIDTH_PX}px` }}
+            style={{ maxWidth: `${burgerWidth}px` }}
           >
             {/* Revealed between the layers as they part. */}
             <motion.div
-              style={{ scale: photoScale, y: photoY }}
+              style={{ scale: photoScale }}
               className="fade-in-reveal pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
             >
               {/* The window the split opens is landscape, so the portrait
                 original is cropped to fill it rather than shrunk to a stamp.
                 objectPosition biases upward to keep both faces in frame. */}
               <div className="relative w-[84%] rotate-[-2deg] bg-white p-1.5 pb-5 shadow-[0_8px_20px_rgba(80,35,20,0.4)]">
-                <div className="relative h-[178px] w-full">
+                {/* Height scales with the burger: the window the split opens
+                    is proportional to the burger's width, so a fixed height
+                    would spill over the lettuce on a shorter screen. */}
+                <div
+                  className="relative w-full"
+                  style={{ height: `${Math.round(burgerWidth * 0.52)}px` }}
+                >
                   <Image
                     src={heroMirror}
                     alt="Abed and Lynn in a Burger King kiosk mirror"
@@ -201,6 +236,7 @@ export function Hero() {
                       layer={layer}
                       progress={scrollYProgress}
                       travel={travel}
+                      burgerWidth={burgerWidth}
                     />
                   ))}
                 </div>
@@ -214,6 +250,13 @@ export function Hero() {
             className="absolute top-[6%] left-1 z-0"
           >
             <Fries className="w-full" />
+          </Sticker>
+          <Sticker
+            rotate={11}
+            width={64}
+            className="absolute top-[54%] right-0 z-0"
+          >
+            <Balloons className="w-full" />
           </Sticker>
           <Sticker
             rotate={20}
@@ -248,13 +291,13 @@ export function Hero() {
           </div>
 
           <div className="fade-out-immediate">
-            <div className="animate-squish-hint relative flex h-[6.4rem] w-[6.4rem] items-center justify-center">
+            <div className="animate-squish-hint relative flex h-[5.9rem] w-[5.9rem] items-center justify-center">
               <Starburst
                 points={12}
                 fill="var(--color-flame)"
                 className="absolute inset-0 h-full w-full drop-shadow-[0_3px_0_rgba(61,27,14,0.35)]"
               />
-              <span className="font-pixel relative -rotate-[8deg] px-4 text-center text-[10px] leading-[1.6] text-cream uppercase">
+              <span className="font-pixel relative -rotate-[8deg] px-3 text-center text-[10px] leading-[1.45] text-cream uppercase">
                 {copy.hero.squishHint}
               </span>
             </div>
@@ -263,7 +306,7 @@ export function Hero() {
 
         {/* Sibling of the centred column, not a child: anchored here it hugs
             the bottom of the viewport rather than the column's own height. */}
-        <div className="fade-out-early pointer-events-none absolute inset-x-0 bottom-6 flex flex-col items-center gap-1">
+        <div className="scroll-cue fade-out-early pointer-events-none absolute inset-x-0 bottom-6 flex flex-col items-center gap-1">
           <span className="font-pixel text-[10px] tracking-[0.16em] text-brown/70 uppercase">
             {copy.hero.scrollHint}
           </span>
