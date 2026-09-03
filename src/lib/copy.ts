@@ -10,6 +10,8 @@ export const copy = {
   hero: {
     eyebrow: "By order of the King & Queen",
     title: "Double Crown",
+    names: "Abed + Lynn",
+    birthdayLine: "are turning a year older",
     tagline: "Two birthdays. One burger. Yalla.",
     squishHint: "Squeeze it. Ma tkhaf.",
     scrollHint: "Scroll down",
