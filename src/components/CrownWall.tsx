@@ -21,9 +21,11 @@ function CrownCard({ rsvp }: { rsvp: Rsvp }) {
 
   return (
     <li
-      style={{ rotate: `${tilt}deg` }}
+      // The tilt rides in a custom property: the drop keyframes set `transform`
+      // and would otherwise overwrite a `rotate` style.
+      style={{ "--tilt": `${tilt}deg` } as React.CSSProperties}
       onPointerDown={() => play(rsvp.coming ? "pop" : "sad")}
-      className={`flex w-[8.5rem] shrink-0 flex-col items-center rounded-md border-[3px] px-2 py-2.5 text-center ${
+      className={`crown-drop flex w-[8.5rem] shrink-0 flex-col items-center rounded-md border-[3px] px-2 py-2.5 text-center ${
         rsvp.coming
           ? "border-brown bg-cream shadow-[3px_3px_0_var(--color-brown)]"
           : "border-ash-dark bg-ash/25 shadow-[3px_3px_0_var(--color-ash-dark)]"
