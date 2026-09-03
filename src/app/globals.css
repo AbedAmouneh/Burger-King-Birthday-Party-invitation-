@@ -193,3 +193,40 @@ button {
 .animate-scroll-nudge {
   animation: scroll-nudge 1.4s ease-in-out infinite;
 }
+
+/* Candle flames. Two of them, offset, so they never flicker in lockstep. */
+@keyframes candle-flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-1.5deg);
+    opacity: 1;
+  }
+  35% {
+    transform: scale(1.1, 0.94) rotate(2deg);
+    opacity: 0.92;
+  }
+  65% {
+    transform: scale(0.94, 1.08) rotate(-2.5deg);
+    opacity: 1;
+  }
+}
+
+.candle-flame {
+  animation: candle-flicker 1.1s ease-in-out infinite;
+}
+
+/* A still flame is still a birthday; a flickering one can be nauseating. */
+@media (prefers-reduced-motion: reduce) {
+  .candle-flame {
+    animation: none;
+  }
+}
+
+/* On a short phone the squeeze prompt and the scroll cue fight for the same
+   few pixels. The prompt wins: it teaches the one interaction people would
+   otherwise miss, and a short screen makes it obvious the page scrolls. */
+@media (max-height: 780px) {
+  .scroll-cue {
+    display: none;
+  }
+}
