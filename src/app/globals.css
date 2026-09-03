@@ -178,3 +178,18 @@ button {
 .fade-in-late {
   opacity: clamp(0, calc((var(--p) - 0.55) / 0.3), 1);
 }
+
+/* Scroll cue: a small repeated nudge downward, not a bounce. */
+@keyframes scroll-nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+.animate-scroll-nudge {
+  animation: scroll-nudge 1.4s ease-in-out infinite;
+}
