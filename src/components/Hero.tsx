@@ -11,6 +11,8 @@ import {
 } from "framer-motion";
 import { BURGER_LAYERS } from "./BurgerLayers";
 import { Polaroid } from "./Polaroid";
+import { Sticker } from "./Sticker";
+import { Fries, Nugget, Starburst } from "./Stickers";
 import { copy } from "@/lib/copy";
 import { useSound } from "@/lib/use-sound";
 import heroMirror from "../../public/photos/hero-mirror.webp";
@@ -112,18 +114,20 @@ export function Hero() {
 
   return (
     <section ref={sectionRef} className="relative h-[260vh]">
-      <div className="sticky top-0 flex h-dvh flex-col items-center justify-center gap-4 overflow-hidden px-5 py-10">
+      <div className="paper sticky top-0 flex h-dvh flex-col items-center justify-center gap-3 overflow-hidden bg-cream px-5 py-8">
         <motion.header
           style={{ opacity: headerOpacity, y: headerY }}
           className="flex flex-col items-center gap-2 text-center"
         >
-          <p className="font-pixel text-[9px] tracking-[0.18em] text-royal uppercase">
+          <p className="font-pixel rounded-sm bg-royal px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-cream uppercase">
             {copy.hero.eyebrow}
           </p>
-          <h1 className="font-display text-[3.1rem] leading-[0.85] text-flame uppercase">
+          <h1 className="font-display -rotate-[2deg] bg-flame px-3 py-1 text-[2.9rem] leading-[0.95] text-cream uppercase shadow-[5px_5px_0_var(--color-brown)]">
             {copy.hero.title}
           </h1>
-          <p className="font-display text-lg text-brown">{copy.hero.tagline}</p>
+          <p className="font-display mt-1 text-lg text-brown">
+            {copy.hero.tagline}
+          </p>
         </motion.header>
 
         <div
@@ -151,7 +155,7 @@ export function Hero() {
                   style={{ objectPosition: "center 26%" }}
                 />
               </div>
-              <p className="font-pixel absolute inset-x-0 bottom-1 text-center text-[7px] text-royal uppercase">
+              <p className="font-pixel absolute inset-x-0 bottom-1 text-center text-[10px] text-royal uppercase">
                 {copy.reveal.caption}
               </p>
             </div>
@@ -193,6 +197,21 @@ export function Hero() {
           </button>
         </div>
 
+        <Sticker
+          rotate={-18}
+          width={54}
+          className="absolute top-[6%] left-1 z-0"
+        >
+          <Fries className="w-full" />
+        </Sticker>
+        <Sticker
+          rotate={20}
+          width={52}
+          className="absolute top-[4%] right-2 z-0"
+        >
+          <Nugget className="w-full" />
+        </Sticker>
+
         {/* Polaroids are pinned to the viewport, not the burger box: the box
             does not move when the layers split, so corner-anchoring inside it
             would drop them straight onto the reveal photo. */}
@@ -226,11 +245,18 @@ export function Hero() {
         {/* The pulse lives on an inner span: a CSS animation on `opacity`
             outranks an inline style, so pulsing the same element Framer is
             fading would pin it visible. Nested, the two opacities multiply. */}
-        <motion.p style={{ opacity: hintOpacity }}>
-          <span className="font-pixel animate-pulse text-[9px] tracking-[0.14em] text-orange uppercase">
-            {copy.hero.squishHint}
-          </span>
-        </motion.p>
+        <motion.div style={{ opacity: hintOpacity }} className="relative">
+          <div className="animate-squish-hint relative flex h-[6.4rem] w-[6.4rem] items-center justify-center">
+            <Starburst
+              points={12}
+              fill="var(--color-flame)"
+              className="absolute inset-0 h-full w-full drop-shadow-[0_3px_0_rgba(61,27,14,0.35)]"
+            />
+            <span className="font-pixel relative -rotate-[8deg] px-4 text-center text-[10px] leading-[1.6] text-cream uppercase">
+              {copy.hero.squishHint}
+            </span>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

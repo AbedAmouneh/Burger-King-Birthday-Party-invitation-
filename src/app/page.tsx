@@ -1,4 +1,5 @@
 import { Decree } from "@/components/Decree";
+import { MuteToggle } from "@/components/MuteToggle";
 import { Hero } from "@/components/Hero";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <main>
       <Hero />
       <Decree />
+      <MuteToggle />
     </main>
   );
 }
