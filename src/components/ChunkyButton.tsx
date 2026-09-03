@@ -14,7 +14,9 @@ type Props = {
 };
 
 const TONES = {
-  flame: "bg-flame text-cream border-brown",
+  // White, not cream: the iOS anti-zoom rule pins button text to 16px, where
+  // WCAG AA wants 4.5:1. Cream on flame is 4.34:1; white on flame is 5.12:1.
+  flame: "bg-flame text-white border-brown",
   yellow: "bg-yellow text-brown border-brown",
   royal: "bg-royal text-cream border-brown",
 } as const;
