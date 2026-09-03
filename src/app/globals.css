@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* ---- Double Crown design tokens ----
+   Tailwind v4 generates utilities from these automatically:
+   --color-flame  ->  bg-flame / text-flame / border-flame
+   --font-display ->  font-display
+*/
+@theme {
+  /* Bold BK parody palette */
+  --color-flame: #d62300;
+  --color-orange: #f5821f;
+  --color-yellow: #ffc72c;
+  --color-brown: #502314;
+  --color-cream: #f5ebdc;
+  --color-royal: #1e3a8a;
+
+  /* Neutrals used by the "not coming" sad crowns */
+  --color-ash: #8a8580;
+  --color-ash-dark: #4a4644;
+
+  /* Bouncy motion. ease-out-back: overshoots, then settles. */
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* MUST be `inline`. These reference the --font-* variables that next/font
+   declares on <body>'s class, not on :root. Plain @theme would emit
+   `--font-display: var(--font-lilita), ...` at :root, where --font-lilita is
+   undefined, making the whole declaration invalid at computed-value time. */
+@theme inline {
+  --font-display: var(--font-lilita), "Arial Black", sans-serif;
+  --font-pixel: var(--font-press-start), ui-monospace, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  /* Section-to-section scroll should never fight the burger-split animation */
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-brown);
+  font-family: var(--font-lilita), "Arial Black", sans-serif;
+  /* Loud, bold, no corporate gradients: a subtle paper-ish speckle only */
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Pixel font is tiny and dense; give it room to breathe wherever it is used. */
+.font-pixel,
+[class*="font-pixel"] {
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+}
+
+/* iOS zooms any input under 16px on focus. Never let that happen. */
+input,
+select,
+textarea,
+button {
+  font-size: max(16px, 1rem);
+}
+
+/* Sticker treatment: white outline + drop shadow, applied to cut-out art. */
+.sticker {
+  filter: drop-shadow(0 4px 6px rgb(80 35 20 / 0.35));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
