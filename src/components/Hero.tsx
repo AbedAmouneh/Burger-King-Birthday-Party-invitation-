@@ -260,6 +260,28 @@ export function Hero() {
             </div>
           </div>
         </div>
+
+        {/* Sibling of the centred column, not a child: anchored here it hugs
+            the bottom of the viewport rather than the column's own height. */}
+        <div className="fade-out-early pointer-events-none absolute inset-x-0 bottom-6 flex flex-col items-center gap-1">
+          <span className="font-pixel text-[10px] tracking-[0.16em] text-brown/70 uppercase">
+            {copy.hero.scrollHint}
+          </span>
+          <svg
+            viewBox="0 0 24 14"
+            className="animate-scroll-nudge h-3 w-5"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 2 L12 11 L22 2"
+              fill="none"
+              stroke="var(--color-flame)"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </div>
     </section>
   );
