@@ -125,10 +125,12 @@ export function CrownWall() {
       </h2>
 
       <div className="flex gap-2.5" aria-live="polite">
-        <span className="font-pixel rounded-sm border-[3px] border-brown bg-yellow px-3 py-2 text-[10px] text-brown uppercase">
+        <span className="font-pixel rounded-sm border-[3px] border-brown bg-yellow px-2.5 py-2 text-[10px] whitespace-nowrap text-brown uppercase">
           {coming.length} {copy.wall.coming}
         </span>
-        <span className="font-pixel rounded-sm border-[3px] border-ash-dark bg-ash/40 px-3 py-2 text-[10px] text-ash-dark uppercase">
+        {/* Muted against the yellow pill, but still cream-on-dark: ash-on-blue
+            was too low contrast to read. */}
+        <span className="font-pixel rounded-sm border-[3px] border-cream/45 bg-brown/45 px-2.5 py-2 text-[10px] whitespace-nowrap text-cream/85 uppercase">
           {notComing.length} {copy.wall.notComing}
         </span>
       </div>
