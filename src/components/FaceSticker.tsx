@@ -41,7 +41,10 @@ export function FaceSticker({
         style={{ rotate: `${rotate}deg` }}
         onPointerDown={() => play("squeak")}
       >
-        <Crown className="absolute -top-[26%] left-1/2 w-[62%] -translate-x-1/2 drop-shadow-[0_3px_0_rgba(80,35,20,0.25)]" />
+        {/* Overlapping the hair, not hovering above it: the cut-outs carry a
+            white sticker outline, so a crown parked clear of the head reads as
+            a detached blob. */}
+        <Crown className="absolute -top-[15%] left-1/2 w-[52%] -translate-x-1/2 -rotate-[8deg] drop-shadow-[0_2px_0_rgba(80,35,20,0.3)]" />
         <Image
           src={src}
           alt={alt}
