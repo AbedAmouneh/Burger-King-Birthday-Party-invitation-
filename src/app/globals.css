@@ -38,14 +38,16 @@
 html {
   /* Section-to-section scroll should never fight the burger-split animation */
   scroll-behavior: smooth;
+  /* Stickers deliberately hang past the viewport edge. `clip` trims them
+     without turning html into a scroll container, which `hidden` would do,
+     and that would break `position: sticky` in the hero. */
+  overflow-x: clip;
 }
 
 body {
   background: var(--color-cream);
   color: var(--color-brown);
   font-family: var(--font-lilita), "Arial Black", sans-serif;
-  /* Loud, bold, no corporate gradients: a subtle paper-ish speckle only */
-  overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
 }
 
