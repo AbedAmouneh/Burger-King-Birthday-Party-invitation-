@@ -50,7 +50,7 @@ export function Decree() {
       </div>
 
       <div className="halftone bg-flame">
-        <div className="relative mx-auto flex max-w-screen-sm flex-col items-center gap-9 px-5 pt-4 pb-6">
+        <div className="relative mx-auto flex max-w-[28rem] flex-col items-center gap-9 px-5 pt-4 pb-6">
           {/* Sticker sheet: scattered, tilted, never on top of the words. */}
           <Sticker rotate={-14} width={58} className="absolute top-24 -left-2 z-10">
             <Fries className="w-full" />
@@ -76,21 +76,26 @@ export function Decree() {
 
           {/* The liner itself: cream paper pinned onto the red block. */}
           <div className="relative mt-10 w-full max-w-[23rem]">
+            {/* Behind the liner (z-0 against the card's z-10) so they cannot
+                cover the first row's label, but raised until only the neck and
+                shoulders are hidden. Overlapping less than that cut each face
+                in half at mouth level, which read as clipping rather than as
+                one sticker tucked behind another. */}
             <FaceSticker
               src={headAbedBk}
               alt="Abed"
               seed="decree-left"
-              width={74}
+              width={86}
               rotate={-11}
-              className="absolute -top-12 -left-3 z-0"
+              className="absolute -top-[5.6rem] left-1 z-0"
             />
             <FaceSticker
               src={headLynnCampfire}
               alt="Lynn"
               seed="decree-right"
-              width={70}
+              width={82}
               rotate={13}
-              className="absolute -top-14 -right-2 z-0"
+              className="absolute -top-[5.4rem] right-2 z-0"
             />
 
             <dl className="paper hard-shadow relative z-10 rounded-md border-[5px] border-brown bg-cream px-5 py-4">
