@@ -5,5 +5,6 @@ export type GalleryPhoto = { slug: string; heads: number };
 
 export const GALLERY: GalleryPhoto[] = [
   { slug: "indoor-selfie", heads: 2 },
+  { slug: "nour-jamil", heads: 2 },
   { slug: "restaurant-mirror", heads: 2 },
 ];
