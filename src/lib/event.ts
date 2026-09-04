@@ -10,7 +10,11 @@ export const TIMEZONE = "Asia/Beirut";
 export const EVENT_START_ISO = "2026-09-06T18:30:00+03:00";
 export const EVENT_END_ISO = "2026-09-06T20:30:00+03:00";
 
-/** RSVP closes end of day Saturday 5 September 2026, Beirut time. */
+/**
+ * The date the decree asks people to reply by. It is a request, not a gate:
+ * nothing locks the form. A client-side lock also depended on the visitor's
+ * own clock, so a phone set wrong would have shut a guest out with no recourse.
+ */
 export const RSVP_DEADLINE_ISO = "2026-09-05T23:59:59+03:00";
 
 export const EVENT_START = new Date(EVENT_START_ISO);

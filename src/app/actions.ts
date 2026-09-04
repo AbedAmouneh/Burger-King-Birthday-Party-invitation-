@@ -2,7 +2,6 @@
 
 import { createHash, timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase-admin";
-import { RSVP_DEADLINE } from "@/lib/event";
 import type { Rsvp } from "@/lib/types";
 
 /** Every action returns this shape so the client never has to guess. */
@@ -22,10 +21,6 @@ function hashesMatch(a: string, b: string): boolean {
   return timingSafeEqual(bufA, bufB);
 }
 
-function deadlinePassed(): boolean {
-  return Date.now() > RSVP_DEADLINE.getTime();
-}
-
 /**
  * Change an existing crown. Authorised by the plaintext token the browser kept
  * when it created the row; the row itself holds only the digest.
@@ -36,9 +31,6 @@ export async function updateRsvp(input: {
   coming: boolean;
   message: string | null;
 }): Promise<Result> {
-  if (deadlinePassed()) {
-    return { ok: false, error: "closed" };
-  }
   if (!input.id || !input.token) {
     return { ok: false, error: "missing" };
   }

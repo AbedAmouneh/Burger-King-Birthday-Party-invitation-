@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { ChunkyButton } from "./ChunkyButton";
 import { copy } from "@/lib/copy";
-import { RSVP_DEADLINE, RSVP_DEADLINE_LABEL } from "@/lib/event";
 import { getSupabase } from "@/lib/supabase";
 import { crownConfetti } from "@/lib/confetti";
 import { useSound } from "@/lib/use-sound";
@@ -24,8 +23,6 @@ type Status = "idle" | "saving" | "done";
 export function RsvpForm() {
   const { play } = useSound();
 
-  const [mounted, setMounted] = useState(false);
-  const [closed, setClosed] = useState(false);
   const [mine, setMine] = useState<MyRsvp | null>(null);
 
   const [name, setName] = useState("");
@@ -34,11 +31,7 @@ export function RsvpForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
-  // The deadline check has to run on the client: the server has no idea what
-  // "now" is for this viewer, and rendering a guess would mismatch on hydrate.
   useEffect(() => {
-    setMounted(true);
-    setClosed(Date.now() > RSVP_DEADLINE.getTime());
     const existing = loadMyRsvp();
     if (existing) {
       setMine(existing);
@@ -74,11 +67,7 @@ export function RsvpForm() {
       });
       if (!result.ok) {
         setStatus("idle");
-        setError(
-          result.error === "closed"
-            ? copy.rsvp.closedBody
-            : copy.rsvp.errorGeneric,
-        );
+        setError(copy.rsvp.errorGeneric);
         return;
       }
     } else {
@@ -113,19 +102,6 @@ export function RsvpForm() {
     setStatus("done");
     play(coming ? "tada" : "sad");
     if (coming) void crownConfetti();
-  }
-
-  if (mounted && closed) {
-    return (
-      <div className="w-full max-w-[23rem] rounded-md border-[5px] border-brown bg-brown px-5 py-6 text-center">
-        <h3 className="font-display text-2xl leading-tight text-yellow uppercase">
-          {copy.rsvp.closedHeading}
-        </h3>
-        <p className="font-pixel mt-3 text-[10px] leading-relaxed text-cream/85">
-          {copy.rsvp.closedBody.replace("{deadline}", RSVP_DEADLINE_LABEL)}
-        </p>
-      </div>
-    );
   }
 
   if (status === "done") {
