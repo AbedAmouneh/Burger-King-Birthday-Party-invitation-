@@ -12,8 +12,8 @@ export default function Home() {
     <main>
       <Hero />
       <Decree />
-      <SideQuest />
       <Court />
+      <SideQuest />
       <Footer />
       <Chase />
       <MuteToggle />
