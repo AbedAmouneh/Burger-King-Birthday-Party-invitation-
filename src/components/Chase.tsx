@@ -9,6 +9,8 @@ import headJamil from "../../public/photos/gallery/nour-jamil-head-1.webp";
 import headNour from "../../public/photos/gallery/nour-jamil-head-2.webp";
 import headSally from "../../public/photos/gallery/sally-head-1.webp";
 import headMohammad from "../../public/photos/gallery/mohammad-head-1.webp";
+import headDia from "../../public/photos/gallery/kassem-dia-head-1.webp";
+import headKassem from "../../public/photos/gallery/kassem-dia-head-2.webp";
 
 /**
  * Who chases whom, and with what. The chaser is listed first because in a flex
@@ -48,6 +50,18 @@ const PAIRS = [
     fleeing: { head: headMohammad, shirt: "#2e2725", legs: "#4a4644" },
     /** A kaff lands at arm's length, same as the slipper. */
     gap: 8,
+  },
+  {
+    chaser: {
+      head: headDia,
+      shirt: "#2e2725",
+      legs: "#4a4644",
+      weapon: "shout" as const,
+      shout: "MAFI RADIANT",
+    },
+    fleeing: { head: headKassem, shirt: "#d62300", legs: "#e8dcc4" },
+    /** Room for the bubble to sit between them rather than over his head. */
+    gap: 70,
   },
 ];
 
@@ -100,7 +114,7 @@ export function Chase() {
 
   const spawn = useCallback(() => {
     const roll = Math.random();
-    const order = [0, 1, 2].sort(() => Math.random() - 0.5);
+    const order = PAIRS.map((_, i) => i).sort(() => Math.random() - 0.5);
 
     if (roll < STAMPEDE_CHANCE) {
       setRuns((r) => [...r, makeRun(order, 26 + Math.random() * 30)]);
@@ -109,11 +123,7 @@ export function Chase() {
 
     if (roll < STAMPEDE_CHANCE + DOUBLE_CHANCE) {
       // Two chases at once, parked in separate bands so they do not collide.
-      setRuns((r) => [
-        ...r,
-        makeRun([order[0]], 20),
-        makeRun([order[1]], 56),
-      ]);
+      setRuns((r) => [...r, makeRun([order[0]], 20), makeRun([order[1]], 56)]);
       return;
     }
 
