@@ -10,8 +10,8 @@ export const TIMEZONE = "Asia/Beirut";
 export const EVENT_START_ISO = "2026-09-06T18:30:00+03:00";
 export const EVENT_END_ISO = "2026-09-06T20:30:00+03:00";
 
-/** RSVP closes end of day Friday 4 September 2026, Beirut time. */
-export const RSVP_DEADLINE_ISO = "2026-09-04T23:59:59+03:00";
+/** RSVP closes end of day Saturday 5 September 2026, Beirut time. */
+export const RSVP_DEADLINE_ISO = "2026-09-05T23:59:59+03:00";
 
 export const EVENT_START = new Date(EVENT_START_ISO);
 export const EVENT_END = new Date(EVENT_END_ISO);

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChunkyButton } from "./ChunkyButton";
 import { copy } from "@/lib/copy";
-import { RSVP_DEADLINE } from "@/lib/event";
+import { RSVP_DEADLINE, RSVP_DEADLINE_LABEL } from "@/lib/event";
 import { getSupabase } from "@/lib/supabase";
 import { crownConfetti } from "@/lib/confetti";
 import { useSound } from "@/lib/use-sound";
@@ -122,7 +122,7 @@ export function RsvpForm() {
           {copy.rsvp.closedHeading}
         </h3>
         <p className="font-pixel mt-3 text-[10px] leading-relaxed text-cream/85">
-          {copy.rsvp.closedBody}
+          {copy.rsvp.closedBody.replace("{deadline}", RSVP_DEADLINE_LABEL)}
         </p>
       </div>
     );
