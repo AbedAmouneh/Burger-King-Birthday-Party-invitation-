@@ -22,6 +22,8 @@ const PAIRS = [
       weapon: "slipper" as const,
     },
     fleeing: { head: headAbed, shirt: "#f5ebdc", legs: "#1e3a8a" },
+    /** Slipper range is arm's length, so they run close together. */
+    gap: 8,
   },
   {
     chaser: {
@@ -31,6 +33,9 @@ const PAIRS = [
       weapon: "pistol" as const,
     },
     fleeing: { head: headJamil, shirt: "#2e2725", legs: "#e8dcc4" },
+    /** Wider: the barrel and the flash need clear air between them and Jamil,
+     *  otherwise the muzzle lands on top of him. */
+    gap: 82,
   },
 ];
 
@@ -91,7 +96,7 @@ export function Chase() {
   }, [reduceMotion]);
 
   if (!run) return null;
-  const { chaser, fleeing } = PAIRS[run.pair];
+  const { chaser, fleeing, gap } = PAIRS[run.pair];
 
   return (
     <div
@@ -104,7 +109,7 @@ export function Chase() {
         style={{ top: `${run.top}%`, animationDuration: `${run.seconds}s` }}
         onAnimationEnd={() => setRun(null)}
       >
-        <div className="flex items-end gap-2">
+        <div className="flex items-end" style={{ gap: `${gap}px` }}>
           <Runner {...chaser} />
           <Runner {...fleeing} />
         </div>
