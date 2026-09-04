@@ -97,6 +97,9 @@ export const copy = {
     duplicate: "This royal is already on the wall",
     errorGeneric: "Something broke. Try again in a second.",
     nameRequired: "The court needs a name.",
+    closedHeading: "The royal gates are closed",
+    closedBody:
+      "The party has started. Come find us at Burger King Raouche.",
   },
 
   wall: {

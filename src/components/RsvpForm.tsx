@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChunkyButton } from "./ChunkyButton";
 import { copy } from "@/lib/copy";
+import { RSVP_DEADLINE } from "@/lib/event";
 import { getSupabase } from "@/lib/supabase";
 import { crownConfetti } from "@/lib/confetti";
 import { useSound } from "@/lib/use-sound";
@@ -28,15 +29,21 @@ export function RsvpForm() {
   const [name, setName] = useState("");
   const [coming, setComing] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
+  const [closed, setClosed] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Cosmetic only: the database is what actually refuses a late insert.
+    const tick = () => setClosed(Date.now() >= RSVP_DEADLINE.getTime());
+    tick();
+    const id = window.setInterval(tick, 30_000);
     const existing = loadMyRsvp();
     if (existing) {
       setMine(existing);
       setName(existing.name);
     }
+    return () => window.clearInterval(id);
   }, []);
 
   async function submit(event: React.FormEvent) {
@@ -102,6 +109,19 @@ export function RsvpForm() {
     setStatus("done");
     play(coming ? "tada" : "sad");
     if (coming) void crownConfetti();
+  }
+
+  if (closed) {
+    return (
+      <div className="w-full max-w-[23rem] rounded-md border-[5px] border-brown bg-brown px-5 py-6 text-center">
+        <h3 className="font-display text-2xl leading-tight text-yellow uppercase">
+          {copy.rsvp.closedHeading}
+        </h3>
+        <p className="font-pixel mt-3 text-[10px] leading-relaxed text-cream/85">
+          {copy.rsvp.closedBody}
+        </p>
+      </div>
+    );
   }
 
   if (status === "done") {

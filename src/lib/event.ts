@@ -11,11 +11,15 @@ export const EVENT_START_ISO = "2026-09-06T18:30:00+03:00";
 export const EVENT_END_ISO = "2026-09-06T20:30:00+03:00";
 
 /**
- * The date the decree asks people to reply by. It is a request, not a gate:
- * nothing locks the form. A client-side lock also depended on the visitor's
- * own clock, so a phone set wrong would have shut a guest out with no recourse.
+ * RSVP stays open right up to the moment the party starts.
+ *
+ * Enforced in TWO places, deliberately. The UI check below reads the visitor's
+ * own clock, so it is only good for showing a friendly message: a phone set
+ * wrong would otherwise lock a guest out with no recourse. The real gate is an
+ * RLS policy on the insert, where the DATABASE clock decides and nobody can
+ * argue with it. See supabase/schema.sql.
  */
-export const RSVP_DEADLINE_ISO = "2026-09-05T23:59:59+03:00";
+export const RSVP_DEADLINE_ISO = EVENT_START_ISO;
 
 export const EVENT_START = new Date(EVENT_START_ISO);
 export const EVENT_END = new Date(EVENT_END_ISO);
