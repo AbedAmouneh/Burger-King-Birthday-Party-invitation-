@@ -8,11 +8,7 @@ import { Starburst } from "./Stickers";
 import { ZigzagEdge } from "./ZigzagEdge";
 import { copy } from "@/lib/copy";
 import { joinSideQuest } from "@/app/actions";
-import {
-  loadMyRsvp,
-  RSVP_CHANGED_EVENT,
-  type MyRsvp,
-} from "@/lib/rsvp-token";
+import { loadMyRsvp, RSVP_CHANGED_EVENT, type MyRsvp } from "@/lib/rsvp-token";
 import { SIDE_QUEST, SIDE_QUEST_WHEN } from "@/lib/event";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
@@ -27,7 +23,9 @@ import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 function JoinSideQuest() {
   const [mine, setMine] = useState<MyRsvp | null>(null);
   const [joined, setJoined] = useState(false);
-  const [count, setCount] = useState<number | null>(null);
+  const [going, setGoing] = useState<{ id: string; name: string }[] | null>(
+    null,
+  );
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -53,11 +51,15 @@ function JoinSideQuest() {
     const supabase = getSupabase();
 
     async function load() {
-      const { count: n } = await supabase
+      // Names, not just a tally: a number tells nobody whether their friends
+      // are going, which is the actual question people are asking.
+      const { data: rows } = await supabase
         .from("rsvps")
-        .select("id", { count: "exact", head: true })
-        .eq("side_quest", true);
-      if (active) setCount(n ?? 0);
+        .select("id, name")
+        .eq("side_quest", true)
+        .order("created_at", { ascending: true })
+        .limit(200);
+      if (active) setGoing(rows ?? []);
 
       // Read back this device's own answer so the button shows the truth even
       // on a different browser session.
@@ -146,15 +148,32 @@ function JoinSideQuest() {
         </>
       ) : null}
 
-      {count === null ? null : (
+      {going === null ? null : going.length === 0 ? (
         <p
           aria-live="polite"
           className="font-pixel rounded-sm border-[3px] border-brown bg-cream px-3 py-2 text-center text-[10px] text-brown uppercase"
         >
-          {count > 0
-            ? `${count} ${copy.sideQuest.countSuffix}`
-            : copy.sideQuest.countNone}
+          {copy.sideQuest.countNone}
         </p>
+      ) : (
+        <div
+          className="flex w-full flex-col items-center gap-2"
+          aria-live="polite"
+        >
+          <p className="font-pixel rounded-sm border-[3px] border-brown bg-cream px-3 py-2 text-[10px] text-brown uppercase">
+            {going.length} {copy.sideQuest.countSuffix}
+          </p>
+          <ul className="flex flex-wrap justify-center gap-2">
+            {going.map((g) => (
+              <li
+                key={g.id}
+                className="font-display rounded-full border-[3px] border-brown bg-yellow px-3 py-1 text-base leading-tight text-brown"
+              >
+                {g.name}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
