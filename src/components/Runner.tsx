@@ -12,7 +12,7 @@ const O = "#3d1b0e";
  * over the top, so it swings with the arm and survives the scaleX(-1) that
  * turns the pair around for a right-to-left run.
  */
-type Weapon = "slipper" | "pistol";
+type Weapon = "slipper" | "pistol" | "hand";
 
 function Body({
   shirt,
@@ -63,7 +63,7 @@ function Body({
 
       <g
         className={
-          weapon === "slipper"
+          weapon === "slipper" || weapon === "hand"
             ? "run-arm-raised"
             : weapon === "pistol"
               ? "run-arm-aim"
@@ -210,6 +210,37 @@ function Pistol() {
   );
 }
 
+/**
+ * An open palm mid-swing. The kaff: no prop required, and the most Lebanese
+ * option of the three.
+ */
+function Hand() {
+  return (
+    <svg viewBox="0 0 96 116" className="h-full w-full" aria-hidden="true">
+      <g
+        fill="#f0b58c"
+        stroke={O}
+        strokeWidth="5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
+        <rect x="26" y="10" width="15" height="46" rx="7.5" />
+        <rect x="42" y="4" width="15" height="52" rx="7.5" />
+        <rect x="58" y="10" width="15" height="46" rx="7.5" />
+        <rect x="72" y="20" width="14" height="38" rx="7" />
+        {/* thumb */}
+        <path d="M24 48 C10 44 4 54 12 62 L28 72 Z" />
+        {/* palm */}
+        <path d="M22 46 L86 46 C90 62 84 86 62 96 C42 104 24 94 20 76 Z" />
+      </g>
+      <g stroke="#d69a72" strokeWidth="4" strokeLinecap="round" fill="none">
+        <path d="M34 66 C46 72 60 72 72 66" />
+        <path d="M32 78 C44 84 58 84 68 78" />
+      </g>
+    </svg>
+  );
+}
+
 export function Runner({
   head,
   shirt,
@@ -240,6 +271,11 @@ export function Runner({
       {weapon === "slipper" ? (
         <div className="run-slipper absolute -top-[9px] -left-[26px] h-[28px] w-[44px]">
           <Slipper />
+        </div>
+      ) : null}
+      {weapon === "hand" ? (
+        <div className="run-slipper absolute -top-[16px] -left-[20px] h-[38px] w-[32px]">
+          <Hand />
         </div>
       ) : null}
       {/* Aimed forward at whoever is running away, so it sits off the leading
