@@ -35,6 +35,7 @@ export async function updateRsvp(input: {
   token: string;
   coming: boolean;
   message: string | null;
+  sideQuest: boolean;
 }): Promise<Result> {
   if (deadlinePassed()) {
     return { ok: false, error: "closed" };
@@ -65,6 +66,7 @@ export async function updateRsvp(input: {
     .update({
       coming: input.coming,
       message: input.message?.trim() ? input.message.trim().slice(0, 180) : null,
+      side_quest: input.sideQuest,
     })
     .eq("id", input.id);
 
@@ -93,7 +95,7 @@ export async function adminList(
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("rsvps")
-    .select("id, name, coming, message, created_at")
+    .select("id, name, coming, message, side_quest, created_at")
     .order("created_at", { ascending: true })
     .limit(500);
 
