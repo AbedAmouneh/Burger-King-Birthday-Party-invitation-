@@ -39,6 +39,33 @@
   color-scheme: only light;
 }
 
+/* ---- Opting out of algorithmic dark mode ------------------------------
+   Samsung Internet and Chrome on Android will re-colour a page themselves if
+   they believe it has no dark mode, which turns this palette into mud.
+   `color-scheme: only light` stops Chrome but Samsung Internet ignores it.
+   What Samsung does honour is a site declaring that it handles dark mode
+   itself, so this block re-asserts the exact same palette under a dark
+   preference. Identical values on purpose: the point is the declaration, not
+   a second theme. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-flame: #d62300;
+    --color-orange: #f5821f;
+    --color-yellow: #ffc72c;
+    --color-brown: #502314;
+    --color-cream: #f5ebdc;
+    --color-royal: #1e3a8a;
+    --color-ash: #8a8580;
+    --color-ash-dark: #4a4644;
+    color-scheme: only light;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-brown);
+  }
+}
+
 html {
   /* Section-to-section scroll should never fight the burger-split animation */
   scroll-behavior: smooth;

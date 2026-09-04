@@ -66,6 +66,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Legacy sibling of color-scheme; some Android browsers still read it. */}
+        <meta name="supported-color-schemes" content="light" />
+      </head>
       <body className={`${lilita.variable} ${pressStart.variable} antialiased`}>
         {children}
       </body>
