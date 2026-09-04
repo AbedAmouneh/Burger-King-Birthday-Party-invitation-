@@ -2,16 +2,50 @@
 
 import { useEffect, useState } from "react";
 import { ChunkyButton } from "./ChunkyButton";
+import { useSound } from "@/lib/use-sound";
 import { Sticker } from "./Sticker";
 import { Starburst } from "./Stickers";
 import { ZigzagEdge } from "./ZigzagEdge";
 import { copy } from "@/lib/copy";
+import { joinSideQuest } from "@/app/actions";
+import {
+  loadMyRsvp,
+  RSVP_CHANGED_EVENT,
+  type MyRsvp,
+} from "@/lib/rsvp-token";
 import { SIDE_QUEST, SIDE_QUEST_WHEN } from "@/lib/event";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
-/** Live tally of who has ticked the side-quest box on their RSVP. */
-function SideQuestCount() {
+/**
+ * Join button plus the live tally.
+ *
+ * The side quest sits after the RSVP, so it cannot be a field on that form:
+ * the guest has already scrolled past it. Instead it asks for itself, using
+ * the edit token the browser kept when they claimed their crown. Anyone who
+ * has not RSVP'd yet is pointed back up rather than given a dead button.
+ */
+function JoinSideQuest() {
+  const [mine, setMine] = useState<MyRsvp | null>(null);
+  const [joined, setJoined] = useState(false);
   const [count, setCount] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { play } = useSound();
+
+  useEffect(() => {
+    setMounted(true);
+    const sync = () => setMine(loadMyRsvp());
+    sync();
+    // This section renders below the form and mounts before anyone fills it
+    // in, so a one-off read would leave it stuck on "claim your crown first".
+    window.addEventListener(RSVP_CHANGED_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(RSVP_CHANGED_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
@@ -19,17 +53,28 @@ function SideQuestCount() {
     const supabase = getSupabase();
 
     async function load() {
-      const { count: n, error } = await supabase
+      const { count: n } = await supabase
         .from("rsvps")
         .select("id", { count: "exact", head: true })
         .eq("side_quest", true);
-      if (active && !error) setCount(n ?? 0);
+      if (active) setCount(n ?? 0);
+
+      // Read back this device's own answer so the button shows the truth even
+      // on a different browser session.
+      const saved = loadMyRsvp();
+      if (saved) {
+        const { data } = await supabase
+          .from("rsvps")
+          .select("side_quest")
+          .eq("id", saved.id)
+          .maybeSingle();
+        if (active && data) setJoined(Boolean(data.side_quest));
+      }
     }
     void load();
 
-    // Same table as the crown wall, so any RSVP change can move this number.
     const channel = supabase
-      .channel("side-quest-count")
+      .channel("side-quest")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "rsvps" },
@@ -43,17 +88,75 @@ function SideQuestCount() {
     };
   }, []);
 
-  if (count === null) return null;
+  async function toggle() {
+    if (!mine) return;
+    setBusy(true);
+    setFailed(false);
+    const next = !joined;
+    const result = await joinSideQuest({
+      id: mine.id,
+      token: mine.token,
+      joining: next,
+    });
+    setBusy(false);
+    if (!result.ok) {
+      setFailed(true);
+      return;
+    }
+    setJoined(next);
+    play(next ? "tada" : "crunch");
+  }
 
   return (
-    <p
-      aria-live="polite"
-      className="font-pixel rounded-sm border-[3px] border-brown bg-cream px-3 py-2 text-[10px] text-brown uppercase"
-    >
-      {count > 0
-        ? `${count} ${copy.sideQuest.countSuffix}`
-        : copy.sideQuest.countNone}
-    </p>
+    <div className="flex w-full max-w-[21rem] flex-col items-center gap-3">
+      {mounted && !mine ? (
+        <>
+          <p className="font-display text-lg leading-snug text-brown">
+            {copy.sideQuest.needRsvp}
+          </p>
+          <ChunkyButton tone="flame" href="#court">
+            {copy.sideQuest.needRsvpCta}
+          </ChunkyButton>
+        </>
+      ) : null}
+
+      {mounted && mine ? (
+        <>
+          {joined ? (
+            <p className="font-display rounded-md border-4 border-brown bg-yellow px-4 py-2 text-lg text-brown">
+              {copy.sideQuest.joined}
+            </p>
+          ) : null}
+          <ChunkyButton
+            tone={joined ? "royal" : "flame"}
+            onClick={toggle}
+            disabled={busy}
+          >
+            {busy
+              ? copy.sideQuest.joining
+              : joined
+                ? copy.sideQuest.leave
+                : copy.sideQuest.join}
+          </ChunkyButton>
+          {failed ? (
+            <p role="alert" className="font-pixel text-[10px] text-brown">
+              {copy.sideQuest.failed}
+            </p>
+          ) : null}
+        </>
+      ) : null}
+
+      {count === null ? null : (
+        <p
+          aria-live="polite"
+          className="font-pixel rounded-sm border-[3px] border-brown bg-cream px-3 py-2 text-center text-[10px] text-brown uppercase"
+        >
+          {count > 0
+            ? `${count} ${copy.sideQuest.countSuffix}`
+            : copy.sideQuest.countNone}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -65,7 +168,8 @@ function SideQuestCount() {
 export function SideQuest() {
   return (
     <section id="side-quest" className="relative">
-      <div className="bg-brown">
+      {/* Sits between the blue court above and the brown footer below. */}
+      <div className="bg-royal">
         <ZigzagEdge fill="var(--color-orange)" flip className="-mb-px" />
       </div>
 
@@ -77,7 +181,11 @@ export function SideQuest() {
             idle="bob"
             className="absolute top-5 -left-3 z-0"
           >
-            <Starburst points={14} fill="var(--color-yellow)" className="w-full" />
+            <Starburst
+              points={14}
+              fill="var(--color-yellow)"
+              className="w-full"
+            />
           </Sticker>
 
           <p className="font-pixel rounded-sm bg-brown px-2.5 py-1.5 text-[10px] tracking-[0.18em] text-yellow uppercase">
@@ -119,11 +227,11 @@ export function SideQuest() {
             {copy.sideQuest.reel}
           </ChunkyButton>
 
-          <SideQuestCount />
+          <JoinSideQuest />
         </div>
       </div>
 
-      <div className="bg-royal">
+      <div className="bg-brown">
         <ZigzagEdge fill="var(--color-orange)" className="-mt-px" />
       </div>
     </section>
