@@ -22,6 +22,11 @@ create table if not exists public.rsvps (
 alter table public.rsvps
   add column if not exists edit_token_hash text;
 
+-- The side quest the night before: null means they never answered, which is
+-- different from a deliberate "no".
+alter table public.rsvps
+  add column if not exists side_quest boolean;
+
 -- Guest rails. Keeps a troll from pasting a novel onto the crown wall.
 do $$
 begin
@@ -79,9 +84,9 @@ create policy rsvps_public_insert
 -- Column-level grants keep the digest out of ordinary reads; anon may write it
 -- on insert but never select it back.
 revoke all on public.rsvps from anon, authenticated;
-grant select (id, name, coming, message, created_at)
+grant select (id, name, coming, message, side_quest, created_at)
   on public.rsvps to anon, authenticated;
-grant insert (name, coming, message, edit_token_hash)
+grant insert (name, coming, message, side_quest, edit_token_hash)
   on public.rsvps to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
