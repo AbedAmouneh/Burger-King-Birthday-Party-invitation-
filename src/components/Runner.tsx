@@ -156,32 +156,55 @@ function Slipper() {
 }
 
 /**
- * A toy water pistol. Bright, blocky and unmistakably a toy: the register here
- * is slapstick, the same as the slipper, and the site's whole theme is a kids
- * meal with a toy in it.
+ * A Desert Eagle, drawn in the same heavy-outline style as everything else:
+ * long squared slide, barrel rib, blocky muzzle and a steeply raked grip. The
+ * viewBox runs well past the muzzle to leave room for the flash.
  */
 function Pistol() {
   return (
-    <svg viewBox="0 0 140 86" className="h-full w-full" aria-hidden="true">
-      <g stroke={O} strokeWidth="4" strokeLinejoin="round">
-        <rect
-          x="26"
-          y="46"
-          width="24"
-          height="34"
-          rx="9"
-          transform="rotate(14 38 63)"
-          fill="#f5821f"
+    <svg viewBox="0 0 210 100" className="h-full w-full" aria-hidden="true">
+      <g stroke="#241611" strokeWidth="4" strokeLinejoin="round">
+        {/* grip */}
+        <path d="M40 56 L64 56 L54 96 L22 96 Z" fill="#2e2725" />
+        {/* frame and trigger guard */}
+        <path
+          d="M34 44 L96 44 L96 62 L74 62 C70 74 56 74 52 62 L34 62 Z"
+          fill="#4f4a47"
         />
-        <rect x="20" y="26" width="76" height="24" rx="10" fill="#f5821f" />
-        <rect x="40" y="6" width="40" height="22" rx="10" fill="#ffc72c" />
-        <rect x="92" y="30" width="16" height="16" rx="6" fill="#d62300" />
+        {/* slide */}
+        <path d="M30 20 L146 20 L146 40 L138 46 L30 46 Z" fill="#6e6764" />
+        <rect x="46" y="14" width="92" height="8" rx="2" fill="#837b77" />
+        {/* muzzle */}
+        <rect x="140" y="24" width="10" height="18" rx="3" fill="#241611" />
+        {/* rear sight and hammer */}
+        <rect x="32" y="10" width="10" height="10" rx="2" fill="#4f4a47" />
+        <path d="M24 26 L32 26 L32 40 L24 36 Z" fill="#4f4a47" />
       </g>
-      {/* water */}
-      <g fill="#1e3a8a" stroke={O} strokeWidth="3">
-        <ellipse cx="116" cy="32" rx="5.5" ry="6.5" />
-        <ellipse cx="128" cy="42" rx="4.5" ry="5.5" />
-        <ellipse cx="118" cy="52" rx="3.5" ry="4.5" />
+      <g stroke="#3d3733" strokeWidth="3" strokeLinecap="round">
+        <path d="M40 26 L40 40" />
+        <path d="M47 26 L47 40" />
+        <path d="M54 26 L54 40" />
+      </g>
+      <g stroke="#4a423e" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M36 66 L56 66" />
+        <path d="M34 74 L54 74" />
+        <path d="M32 82 L51 82" />
+      </g>
+
+      {/* muzzle flash, on its own group so it can blink independently */}
+      <g className="muzzle-flash">
+        <path
+          d="M148 33 L176 16 L169 29 L204 22 L180 33 L204 44 L169 37 L176 50 Z"
+          fill="#f5821f"
+          stroke="#241611"
+          strokeWidth="3.5"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M150 33 L172 24 L167 32 L188 28 L173 33 L188 38 L167 34 L172 42 Z"
+          fill="#ffc72c"
+        />
+        <ellipse cx="156" cy="33" rx="7" ry="6" fill="#fff6e0" />
       </g>
     </svg>
   );
@@ -222,7 +245,7 @@ export function Runner({
       {/* Aimed forward at whoever is running away, so it sits off the leading
           edge of the body rather than up behind the head. */}
       {weapon === "pistol" ? (
-        <div className="run-pistol absolute top-[5px] left-[58px] h-[30px] w-[48px]">
+        <div className="run-pistol absolute top-[2px] left-[54px] h-[32px] w-[68px]">
           <Pistol />
         </div>
       ) : null}
