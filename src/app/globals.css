@@ -525,3 +525,41 @@ button {
     animation: none;
   }
 }
+
+/* Nour aims forward at Jamil rather than winding up overhead, so her arm sits
+   near horizontal with a small recoil wobble. */
+@keyframes arm-aim {
+  0%,
+  100% {
+    transform: rotate(-86deg);
+  }
+  50% {
+    transform: rotate(-96deg);
+  }
+}
+
+.run-arm-aim {
+  transform-origin: 42px 20px;
+  animation: arm-aim 0.3s ease-in-out infinite;
+}
+
+@keyframes pistol-recoil {
+  0%,
+  100% {
+    transform: translateX(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateX(-4px) rotate(4deg);
+  }
+}
+
+.run-pistol {
+  animation: pistol-recoil 0.3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .run-arm-aim,
+  .run-pistol {
+    animation: none;
+  }
+}
