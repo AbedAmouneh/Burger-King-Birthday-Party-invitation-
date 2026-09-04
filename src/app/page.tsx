@@ -4,6 +4,7 @@ import { Court } from "@/components/Court";
 import { Decree } from "@/components/Decree";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
+import { SideQuest } from "@/components/SideQuest";
 import { MuteToggle } from "@/components/MuteToggle";
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
     <main>
       <Hero />
       <Decree />
+      <SideQuest />
       <Court />
       <Footer />
       <Chase />
