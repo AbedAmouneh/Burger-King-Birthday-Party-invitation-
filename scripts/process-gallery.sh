@@ -66,9 +66,21 @@ print(x, y)")"
   "$T/lift" "$photo" "$T/$slug-matte.png" >/dev/null 2>&1 || {
     echo "    no subject matte, skipping heads"; echo "$slug|0" >> "$manifest"; continue; }
 
+  # Drop passers-by, so a stranger in a restaurant never becomes a sticker on
+  # a published page. Measured against the LARGEST face in the same photo, not
+  # against the frame: a subject standing further back is still small in frame,
+  # so an absolute threshold throws out real people. Bystanders come in around
+  # 30% of the main face, real pairs at 85% or more.
+  biggest=$("$T/faces" "$photo" | awk '/^face/ { if ($4 > m) m = $4 } END { print m+0 }')
+  minface=$(python3 -c "print(int($biggest * 0.45))")
+
   n=0
   while read -r kw fx fy fw fh _rollkw roll _; do
     [ "$kw" = "face" ] || continue
+    if [ "$fw" -lt "$minface" ]; then
+      echo "    skipping a background face (${fw}px, under 45% of ${biggest}px)"
+      continue
+    fi
     n=$((n+1))
     if scripts/head-sticker.sh "$T/$slug-matte.png" "$fx" "$fy" "$fw" "$fh" \
          "$OUT/$slug-head-$n.webp" "$roll"; then
