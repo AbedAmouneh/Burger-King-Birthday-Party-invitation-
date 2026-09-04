@@ -88,25 +88,58 @@ function Body({
   );
 }
 
-/** The weapon of choice in every Lebanese household. */
+/**
+ * The weapon of choice in every Lebanese household: a slide sandal from above,
+ * narrow at the heel and wide at the toe, with a visible sole edge under it.
+ *
+ * Drawn in a 122-unit box rather than the ~50 I first used. Stroke widths are
+ * absolute, so in a small viewBox the 4-unit outline ate the whole shape; here
+ * it is ~3% of the width and reads as an outline. A single strap beats a
+ * V-thong at the 44px this actually renders at.
+ */
 function Slipper() {
+  const sole =
+    "M20 38 C20 31 27 27 36 26 C46 25 54 28 66 25 " +
+    "C86 21 106 25 106 38 C106 51 86 55 66 51 " +
+    "C54 48 46 51 36 50 C27 49 20 45 20 38 Z";
+
   return (
-    <svg viewBox="0 0 40 26" className="h-full w-full" aria-hidden="true">
-      <ellipse
-        cx="20"
-        cy="13"
-        rx="17"
-        ry="10"
+    <svg viewBox="0 0 122 76" className="h-full w-full" aria-hidden="true">
+      {/* sole edge, offset down so it reads as a solid object */}
+      <path
+        d={sole}
+        transform="translate(0 8)"
+        fill="#14286b"
+        stroke={O}
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* footbed */}
+      <path
+        d={sole}
         fill="#1e3a8a"
         stroke={O}
         strokeWidth="4"
+        strokeLinejoin="round"
       />
       <path
-        d="M12 13 C16 7 24 7 28 13"
+        d="M30 33 C36 29 44 27 52 27"
         fill="none"
-        stroke="#ffc72c"
-        strokeWidth="4"
+        stroke="#4763b8"
+        strokeWidth="5"
         strokeLinecap="round"
+      />
+      {/* strap */}
+      <rect
+        x="70"
+        y="19"
+        width="18"
+        height="40"
+        rx="9"
+        transform="rotate(-10 79 38)"
+        fill="#ffc72c"
+        stroke={O}
+        strokeWidth="4"
       />
     </svg>
   );
@@ -140,7 +173,7 @@ export function Runner({
           SVG the swing puts it straight behind the face. As a sibling it still
           mirrors correctly when the pair turns around. */}
       {slipper ? (
-        <div className="run-slipper absolute -top-[7px] -left-[21px] h-[26px] w-[38px]">
+        <div className="run-slipper absolute -top-[9px] -left-[26px] h-[28px] w-[44px]">
           <Slipper />
         </div>
       ) : null}
