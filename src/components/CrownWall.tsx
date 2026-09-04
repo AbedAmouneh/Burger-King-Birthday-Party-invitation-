@@ -8,7 +8,7 @@ import { useSound } from "@/lib/use-sound";
 import type { Rsvp } from "@/lib/types";
 
 /** Only the columns anon is granted; `select *` would hit the token digest. */
-const COLUMNS = "id, name, coming, message, created_at";
+const COLUMNS = "id, name, coming, message, side_quest, created_at";
 
 function CrownCard({ rsvp }: { rsvp: Rsvp }) {
   const Crown = crownFor(rsvp.id);

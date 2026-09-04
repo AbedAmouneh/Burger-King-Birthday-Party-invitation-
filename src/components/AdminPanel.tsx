@@ -9,11 +9,12 @@ import type { Rsvp } from "@/lib/types";
 
 function toCsv(rows: Rsvp[]): string {
   const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
-  const header = ["name", "coming", "message", "created_at"].join(",");
+  const header = ["name", "coming", "side_quest", "message", "created_at"].join(",");
   const body = rows.map((r) =>
     [
       escape(r.name),
       r.coming ? "yes" : "no",
+      r.side_quest ? "yes" : "no",
       escape(r.message ?? ""),
       escape(r.created_at),
     ].join(","),
@@ -149,6 +150,9 @@ export function AdminPanel() {
                           >
                             {r.coming ? "· coming" : "· can't"}
                           </span>
+                          {r.side_quest ? (
+                            <span className="text-orange"> · side quest</span>
+                          ) : null}
                         </p>
                         {r.message ? (
                           <p className="font-pixel mt-1 text-[10px] leading-relaxed break-words text-cream/75">
