@@ -30,12 +30,18 @@ export function loadMyRsvp(): MyRsvp | null {
   }
 }
 
+/** Fired when this device claims or clears a crown, so other sections can react. */
+export const RSVP_CHANGED_EVENT = "double-crown:rsvp-changed";
+
 export function saveMyRsvp(value: MyRsvp): void {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
   } catch {
     // Private mode: the guest simply loses the ability to edit later.
   }
+  // The side quest sits further down the page and mounted before this
+  // happened, so it has to be told rather than left to poll.
+  window.dispatchEvent(new CustomEvent(RSVP_CHANGED_EVENT));
 }
 
 export function clearMyRsvp(): void {
@@ -44,6 +50,7 @@ export function clearMyRsvp(): void {
   } catch {
     // Nothing to do.
   }
+  window.dispatchEvent(new CustomEvent(RSVP_CHANGED_EVENT));
 }
 
 /** 256 bits of randomness, hex encoded. */
