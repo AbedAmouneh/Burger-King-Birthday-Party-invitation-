@@ -633,3 +633,27 @@ button {
     opacity: 1;
   }
 }
+
+/* A shout should look shouted: a quick shake rather than a gentle float. */
+@keyframes shout-shake {
+  0%,
+  100% {
+    transform: rotate(-3deg) scale(1);
+  }
+  25% {
+    transform: rotate(2deg) scale(1.05);
+  }
+  60% {
+    transform: rotate(-1deg) scale(0.98);
+  }
+}
+
+.run-shout {
+  animation: shout-shake 0.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .run-shout {
+    animation: none;
+  }
+}

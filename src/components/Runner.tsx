@@ -12,7 +12,7 @@ const O = "#3d1b0e";
  * over the top, so it swings with the arm and survives the scaleX(-1) that
  * turns the pair around for a right-to-left run.
  */
-type Weapon = "slipper" | "pistol" | "hand";
+type Weapon = "slipper" | "pistol" | "hand" | "shout";
 
 function Body({
   shirt,
@@ -241,16 +241,52 @@ function Hand() {
   );
 }
 
+/**
+ * A shout, not a weapon. The bubble is deliberately large for its runner: the
+ * line has to be readable in the four seconds it takes to cross the screen, so
+ * the text sits at the same 10px floor as the rest of the pixel type.
+ */
+function Shout({ text }: { text: string }) {
+  return (
+    <div className="relative h-[86px] w-[140px]">
+      <svg
+        viewBox="0 0 200 124"
+        className="absolute inset-0 h-full w-full"
+        aria-hidden="true"
+      >
+        {/* Tail is part of the outline rather than a separate triangle, so no
+            stroke runs through the middle of the bubble. */}
+        <path
+          d="M10 44 L34 30 L30 10 L58 22 L70 4 L92 18 L112 4 L126 22 L152 12
+             L154 34 L182 32 L172 52 L194 64 L170 78 L184 98 L156 98 L152 118
+             L128 104 L108 120 L92 104 L64 116 L60 96 L52 122 L30 92 L8 88
+             L26 66 Z"
+          fill="#f5ebdc"
+          stroke={O}
+          strokeWidth="6"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <span className="font-pixel absolute inset-0 flex items-center justify-center px-[17%] pb-[8%] text-center text-[10px] leading-[1.5] text-flame">
+        {text}
+      </span>
+    </div>
+  );
+}
+
 export function Runner({
   head,
   shirt,
   legs,
   weapon,
+  shout,
 }: {
   head: StaticImageData;
   shirt: string;
   legs: string;
   weapon?: Weapon;
+  /** The line, for weapon: "shout". */
+  shout?: string;
 }) {
   return (
     <div className="run-gait relative h-[84px] w-[64px]">
@@ -276,6 +312,11 @@ export function Runner({
       {weapon === "hand" ? (
         <div className="run-slipper absolute -top-[16px] -left-[20px] h-[38px] w-[32px]">
           <Hand />
+        </div>
+      ) : null}
+      {weapon === "shout" && shout ? (
+        <div className="run-shout absolute -top-[74px] left-[34px]">
+          <Shout text={shout} />
         </div>
       ) : null}
       {/* Aimed forward at whoever is running away, so it sits off the leading
