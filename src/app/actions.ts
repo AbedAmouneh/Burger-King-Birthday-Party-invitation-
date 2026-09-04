@@ -35,7 +35,6 @@ export async function updateRsvp(input: {
   token: string;
   coming: boolean;
   message: string | null;
-  sideQuest: boolean;
 }): Promise<Result> {
   if (deadlinePassed()) {
     return { ok: false, error: "closed" };
@@ -66,8 +65,43 @@ export async function updateRsvp(input: {
     .update({
       coming: input.coming,
       message: input.message?.trim() ? input.message.trim().slice(0, 180) : null,
-      side_quest: input.sideQuest,
     })
+    .eq("id", input.id);
+
+  if (error) return { ok: false, error: "failed" };
+  return { ok: true, data: undefined };
+}
+
+/**
+ * Opt in or out of the side quest, without touching anything else on the row.
+ * Separate from updateRsvp so joining cannot accidentally overwrite the
+ * guest's party answer or their message.
+ */
+export async function joinSideQuest(input: {
+  id: string;
+  token: string;
+  joining: boolean;
+}): Promise<Result> {
+  if (!input.id || !input.token) return { ok: false, error: "missing" };
+
+  const supabase = createAdminClient();
+  const { data: row, error: readError } = await supabase
+    .from("rsvps")
+    .select("id, edit_token_hash")
+    .eq("id", input.id)
+    .maybeSingle();
+
+  if (readError || !row) return { ok: false, error: "notfound" };
+  if (
+    !row.edit_token_hash ||
+    !hashesMatch(row.edit_token_hash, sha256(input.token))
+  ) {
+    return { ok: false, error: "forbidden" };
+  }
+
+  const { error } = await supabase
+    .from("rsvps")
+    .update({ side_quest: input.joining })
     .eq("id", input.id);
 
   if (error) return { ok: false, error: "failed" };
