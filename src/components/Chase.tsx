@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Runner } from "./Runner";
 import headAbed from "../../public/photos/gallery/indoor-selfie-head-1.webp";
@@ -35,8 +35,7 @@ const PAIRS = [
       weapon: "pistol" as const,
     },
     fleeing: { head: headJamil, shirt: "#2e2725", legs: "#e8dcc4" },
-    /** Wider: the barrel and the flash need clear air between them and Jamil,
-     *  otherwise the muzzle lands on top of him. */
+    /** Wider: the barrel and the flash need clear air between them and Jamil. */
     gap: 82,
   },
   {
@@ -53,80 +52,122 @@ const PAIRS = [
 ];
 
 type Run = {
-  /** Changes every run so React remounts the pair and the animation restarts. */
   id: number;
-  pair: number;
+  /** Which pairs run together. More than one makes a stampede. */
+  pairs: number[];
   direction: "ltr" | "rtl";
   /** Distance from the top of the viewport, in percent. */
   top: number;
   seconds: number;
 };
 
-const FIRST_RUN_MIN = 5_000;
-const FIRST_RUN_JITTER = 5_000;
-const GAP_MIN = 14_000;
-const GAP_JITTER = 16_000;
+const FIRST_RUN_MIN = 4_000;
+const FIRST_RUN_JITTER = 3_000;
+const GAP_MIN = 7_000;
+const GAP_JITTER = 8_000;
 
-function randomRun(): Run {
+/** Chance a scheduled run sends two pairs at different heights at once. */
+const DOUBLE_CHANCE = 0.3;
+/** Chance it is a stampede: everyone in one line. */
+const STAMPEDE_CHANCE = 0.12;
+
+let nextId = 1;
+
+function makeRun(pairs: number[], topBand: number): Run {
   return {
-    id: Date.now(),
-    pair: Math.floor(Math.random() * PAIRS.length),
+    id: nextId++,
+    pairs,
     direction: Math.random() < 0.5 ? "ltr" : "rtl",
-    // Kept away from the very top and bottom, where the fixed mute button and
-    // the page's own headings live.
-    top: 22 + Math.random() * 52,
-    seconds: 4.2 + Math.random() * 2.6,
+    // Bands keep simultaneous runs off each other, and away from the very top
+    // and bottom where the fixed mute button and the headings live.
+    top: topBand + Math.random() * 16,
+    seconds: 4 + Math.random() * 2.8,
   };
 }
 
 /**
- * Every so often, one of the pairs tears across the screen: Lynn after Abed
- * with a slipper, or Nour after Jamil with a water pistol.
+ * Every so often people tear across the screen: Lynn after Abed with a
+ * slipper, Nour after Jamil with a pistol, Sally after Mohammad with a kaff.
+ * Sometimes two chases at once, occasionally everyone at the same time.
  *
  * Purely decorative: the layer never takes pointer events, sits below the mute
- * button and the admin panel, and is switched off entirely for anyone who asks
- * for reduced motion.
+ * button and the admin panel, and is off entirely under reduced motion.
  */
 export function Chase() {
   const reduceMotion = useReducedMotion();
-  const [run, setRun] = useState<Run | null>(null);
+  const [runs, setRuns] = useState<Run[]>([]);
+  const timer = useRef<number | undefined>(undefined);
+
+  const spawn = useCallback(() => {
+    const roll = Math.random();
+    const order = [0, 1, 2].sort(() => Math.random() - 0.5);
+
+    if (roll < STAMPEDE_CHANCE) {
+      setRuns((r) => [...r, makeRun(order, 26 + Math.random() * 30)]);
+      return;
+    }
+
+    if (roll < STAMPEDE_CHANCE + DOUBLE_CHANCE) {
+      // Two chases at once, parked in separate bands so they do not collide.
+      setRuns((r) => [
+        ...r,
+        makeRun([order[0]], 20),
+        makeRun([order[1]], 56),
+      ]);
+      return;
+    }
+
+    setRuns((r) => [...r, makeRun([order[0]], 22 + Math.random() * 36)]);
+  }, []);
 
   useEffect(() => {
     if (reduceMotion) return;
 
-    let timer: number;
     const schedule = (delay: number) => {
-      timer = window.setTimeout(() => {
-        // Randomising on the client only: picking a route during render would
-        // give the server one answer and the browser another.
-        setRun(randomRun());
+      timer.current = window.setTimeout(() => {
+        spawn();
         schedule(GAP_MIN + Math.random() * GAP_JITTER);
       }, delay);
     };
 
     schedule(FIRST_RUN_MIN + Math.random() * FIRST_RUN_JITTER);
-    return () => window.clearTimeout(timer);
-  }, [reduceMotion]);
+    return () => window.clearTimeout(timer.current);
+  }, [reduceMotion, spawn]);
 
-  if (!run) return null;
-  const { chaser, fleeing, gap } = PAIRS[run.pair];
+  if (runs.length === 0) return null;
 
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-40 overflow-hidden"
     >
-      <div
-        key={run.id}
-        className={run.direction === "ltr" ? "chase-ltr" : "chase-rtl"}
-        style={{ top: `${run.top}%`, animationDuration: `${run.seconds}s` }}
-        onAnimationEnd={() => setRun(null)}
-      >
-        <div className="flex items-end" style={{ gap: `${gap}px` }}>
-          <Runner {...chaser} />
-          <Runner {...fleeing} />
+      {runs.map((run) => (
+        <div
+          key={run.id}
+          className={run.direction === "ltr" ? "chase-ltr" : "chase-rtl"}
+          style={{ top: `${run.top}%`, animationDuration: `${run.seconds}s` }}
+          onAnimationEnd={() =>
+            setRuns((current) => current.filter((r) => r.id !== run.id))
+          }
+        >
+          <div className="flex items-end">
+            {run.pairs.map((index, position) => {
+              const { chaser, fleeing, gap } = PAIRS[index];
+              return (
+                <div
+                  key={index}
+                  className="flex items-end"
+                  // Space between chases in a stampede, none before the first.
+                  style={{ gap: `${gap}px`, marginLeft: position ? 46 : 0 }}
+                >
+                  <Runner {...chaser} />
+                  <Runner {...fleeing} />
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
