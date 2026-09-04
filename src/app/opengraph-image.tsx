@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import {
   EVENT_DATE_LONG,
-  EVENT_TIME,
+  EVENT_TIME_RANGE,
   EVENT_WEEKDAY,
   FEE,
   SITE_NAME,
@@ -123,7 +123,10 @@ export default async function OpengraphImage() {
           }}
         >
           <div style={{ fontSize: 40, color: "#502314", display: "flex" }}>
-            {EVENT_WEEKDAY} {EVENT_DATE_LONG} · {EVENT_TIME}
+            {EVENT_WEEKDAY} {EVENT_DATE_LONG}
+          </div>
+          <div style={{ fontSize: 34, color: "#d62300", marginTop: 4, display: "flex" }}>
+            {EVENT_TIME_RANGE}
           </div>
           {/* Lilita One, not the pixel face: Press Start 2P has no uppercase
               É, so "RAOUCHÉ" falls back to a lowercase glyph there. */}

@@ -13,7 +13,7 @@ import { downloadIcs, googleCalendarUrl } from "@/lib/calendar";
 import {
   DRESS_CODE,
   EVENT_DATE_LONG,
-  EVENT_TIME,
+  EVENT_TIME_RANGE,
   EVENT_WEEKDAY,
   RSVP_DEADLINE_LABEL,
   VENUE,
@@ -121,7 +121,7 @@ export function Decree() {
               <Row label={copy.decree.labels.when}>
                 {EVENT_WEEKDAY} {EVENT_DATE_LONG}
                 <br />
-                {EVENT_TIME}
+                {EVENT_TIME_RANGE}
               </Row>
               <Row label={copy.decree.labels.where}>
                 {VENUE.name}

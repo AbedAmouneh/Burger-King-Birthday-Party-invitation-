@@ -6,10 +6,9 @@
 
 export const TIMEZONE = "Asia/Beirut";
 
-/** Party start: 6 September 2026, 18:00 Beirut (UTC+3 in September / EEST). */
-export const EVENT_START_ISO = "2026-09-06T18:00:00+03:00";
-/** Assumed 4 hours; only used for the calendar entry's end time. */
-export const EVENT_END_ISO = "2026-09-06T22:00:00+03:00";
+/** Party runs 18:30 to 20:30 Beirut (UTC+3 in September / EEST). */
+export const EVENT_START_ISO = "2026-09-06T18:30:00+03:00";
+export const EVENT_END_ISO = "2026-09-06T20:30:00+03:00";
 
 /** RSVP closes end of day Friday 4 September 2026, Beirut time. */
 export const RSVP_DEADLINE_ISO = "2026-09-04T23:59:59+03:00";
@@ -64,11 +63,14 @@ export const EVENT_DATE_LONG = formatInBeirut(EVENT_START, {
   month: "long",
   year: "numeric",
 });
-export const EVENT_TIME = formatInBeirut(EVENT_START, {
-  hour: "numeric",
-  minute: "2-digit",
-  hour12: true,
-});
+const timeOnly = (d: Date) =>
+  formatInBeirut(d, { hour: "numeric", minute: "2-digit", hour12: true });
+
+export const EVENT_TIME = timeOnly(EVENT_START);
+export const EVENT_END_TIME = timeOnly(EVENT_END);
+
+/** Guests need the finish time as much as the start: it is a two-hour slot. */
+export const EVENT_TIME_RANGE = `${EVENT_TIME} to ${EVENT_END_TIME}`;
 export const RSVP_DEADLINE_LABEL = formatInBeirut(RSVP_DEADLINE, {
   weekday: "long",
   day: "numeric",
