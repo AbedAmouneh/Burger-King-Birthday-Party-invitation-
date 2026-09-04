@@ -54,6 +54,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // The invite has one look. Never follow the system dark-mode setting.
+  colorScheme: "light",
   themeColor: "#d62300",
   width: "device-width",
   initialScale: 1,

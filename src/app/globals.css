@@ -31,8 +31,12 @@
   --font-pixel: var(--font-press-start), ui-monospace, monospace;
 }
 
+/* `only light` is stronger than plain `light`: it also stops the browser from
+   applying its own dark-mode adjustments to form controls, scrollbars and
+   canvas backgrounds. This page has one palette and ignores the system setting
+   entirely. */
 :root {
-  color-scheme: light;
+  color-scheme: only light;
 }
 
 html {
@@ -545,21 +549,60 @@ button {
 
 @keyframes pistol-recoil {
   0%,
+  58%,
   100% {
-    transform: translateX(0) rotate(-4deg);
+    transform: translateX(0) rotate(0deg);
   }
-  50% {
-    transform: translateX(-4px) rotate(4deg);
+  63% {
+    transform: translateX(-7px) rotate(-9deg);
+  }
+  74% {
+    transform: translateX(-2px) rotate(-3deg);
   }
 }
 
 .run-pistol {
-  animation: pistol-recoil 0.3s ease-in-out infinite;
+  animation: pistol-recoil 0.9s ease-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .run-arm-aim,
   .run-pistol {
     animation: none;
+  }
+}
+
+/* Muzzle flash: dark most of the cycle, one sharp blink. A constant glow reads
+   as a lamp; the gap between blinks is what makes it read as firing. */
+@keyframes muzzle-fire {
+  0%,
+  58%,
+  100% {
+    opacity: 0;
+    transform: scale(0.45);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  70% {
+    opacity: 0.85;
+    transform: scale(0.92);
+  }
+  78% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+.muzzle-flash {
+  transform-origin: 148px 33px;
+  animation: muzzle-fire 0.9s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .muzzle-flash {
+    animation: none;
+    opacity: 1;
   }
 }
