@@ -76,3 +76,23 @@ export const RSVP_DEADLINE_LABEL = formatInBeirut(RSVP_DEADLINE, {
   day: "numeric",
   month: "long",
 });
+
+// ---------------------------------------------------------------------------
+// Side quest: the informal one the night before.
+// ---------------------------------------------------------------------------
+
+export const SIDE_QUEST = {
+  venue: "Frozen Cherry",
+  startIso: "2026-09-05T18:00:00+03:00",
+  // The ?igsi= parameter Instagram appends is a share-tracking token tied to
+  // whoever copied the link, so it is stripped rather than published.
+  reelUrl: "https://www.instagram.com/reel/DcwI0PYAGpI/",
+} as const;
+
+export const SIDE_QUEST_START = new Date(SIDE_QUEST.startIso);
+
+export const SIDE_QUEST_WHEN = `${formatInBeirut(SIDE_QUEST_START, {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+})}, ${timeOnly(SIDE_QUEST_START)}`;

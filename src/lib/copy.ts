@@ -48,6 +48,19 @@ export const copy = {
     openInMaps: "Open in maps",
   },
 
+  sideQuest: {
+    eyebrow: "Side quest",
+    heading: "The night before",
+    blurb: "The last Frozen Cherry party. Ever.",
+    tagline: "Warm-up round. Same crew, one day early.",
+    labelWhen: "When",
+    labelWhere: "Where",
+    reel: "Watch the reel",
+    joinLabel: "Coming to the side quest too?",
+    countSuffix: "in for the side quest",
+    countNone: "Nobody yet. Be the one, yalla.",
+  },
+
   countdown: {
     heading: "Till the crowns drop",
     units: { days: "Days", hours: "Hrs", minutes: "Min", seconds: "Sec" },
@@ -72,6 +85,8 @@ export const copy = {
     changeAnswer: "Changed your mind?",
     editingHint: "This device already claimed a crown. You can change your answer.",
     comingRequired: "Pick one: Akid or La2.",
+    sideQuestLabel:
+      "Also coming to the side quest? Frozen Cherry, Saturday 6 PM.",
     notConfigured:
       "RSVP is not wired up yet. Add the Supabase keys to .env.local and restart the dev server.",
     duplicate: "This royal is already on the wall",
