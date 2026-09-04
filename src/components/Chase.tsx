@@ -7,6 +7,8 @@ import headAbed from "../../public/photos/gallery/indoor-selfie-head-1.webp";
 import headLynn from "../../public/photos/gallery/indoor-selfie-head-2.webp";
 import headJamil from "../../public/photos/gallery/nour-jamil-head-1.webp";
 import headNour from "../../public/photos/gallery/nour-jamil-head-2.webp";
+import headSally from "../../public/photos/gallery/sally-head-1.webp";
+import headMohammad from "../../public/photos/gallery/mohammad-head-1.webp";
 
 /**
  * Who chases whom, and with what. The chaser is listed first because in a flex
@@ -36,6 +38,17 @@ const PAIRS = [
     /** Wider: the barrel and the flash need clear air between them and Jamil,
      *  otherwise the muzzle lands on top of him. */
     gap: 82,
+  },
+  {
+    chaser: {
+      head: headSally,
+      shirt: "#f5ebdc",
+      legs: "#4a4644",
+      weapon: "hand" as const,
+    },
+    fleeing: { head: headMohammad, shirt: "#2e2725", legs: "#4a4644" },
+    /** A kaff lands at arm's length, same as the slipper. */
+    gap: 8,
   },
 ];
 
