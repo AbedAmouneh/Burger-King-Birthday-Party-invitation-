@@ -66,14 +66,19 @@ create policy rsvps_public_read
   to anon, authenticated
   using (true);
 
--- Anyone with the link can add exactly one crown (uniqueness is enforced by
--- the index above, not by the policy).
+-- Anyone with the link can add exactly one crown, up until the party starts.
+-- Uniqueness is enforced by the index above, not by the policy.
+--
+-- The cutoff lives HERE rather than only in the UI because the browser check
+-- reads the visitor's own clock: a phone set wrong would lock a guest out, and
+-- anyone can set their clock back to get around it. now() is the database
+-- clock, so this is the answer that actually counts.
 drop policy if exists rsvps_public_insert on public.rsvps;
 create policy rsvps_public_insert
   on public.rsvps
   for insert
   to anon, authenticated
-  with check (true);
+  with check (now() < timestamptz '2026-09-06T18:30:00+03:00');
 
 -- Deliberately NO update or delete policy for anon/authenticated.
 -- With RLS on and no matching policy, those statements affect zero rows.
