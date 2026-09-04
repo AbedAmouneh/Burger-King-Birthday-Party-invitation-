@@ -65,7 +65,10 @@ export function Countdown() {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <h2 className="font-display text-2xl text-cream uppercase">
+      {/* Yellow, not cream: everything else on this board is yellow, and a
+          near-white against this very warm brown reads oddly cool on some
+          phone screens. */}
+      <h2 className="font-display text-2xl text-yellow uppercase">
         {copy.countdown.heading}
       </h2>
 
