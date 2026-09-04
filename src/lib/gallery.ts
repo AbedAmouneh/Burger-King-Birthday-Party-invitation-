@@ -7,6 +7,7 @@ export const GALLERY: GalleryPhoto[] = [
   { slug: "indoor-selfie", heads: 2 },
   { slug: "nour-jamil", heads: 2 },
   { slug: "sally", heads: 1 },
+  { slug: "kassem-dia", heads: 2 },
   { slug: "mohammad", heads: 1 },
   { slug: "restaurant-mirror", heads: 2 },
 ];
