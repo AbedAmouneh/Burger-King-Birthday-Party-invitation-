@@ -59,6 +59,13 @@ export const copy = {
     joinLabel: "Coming to the side quest too?",
     countSuffix: "in for the side quest",
     countNone: "Nobody yet. Be the one, yalla.",
+    join: "Count me in",
+    joining: "Adding you...",
+    leave: "Actually, can't",
+    joined: "You're in for the side quest.",
+    needRsvp: "Claim your crown first, then come back for this one.",
+    needRsvpCta: "Go to the RSVP",
+    failed: "That did not save. Try again in a second.",
   },
 
   countdown: {
@@ -85,8 +92,6 @@ export const copy = {
     changeAnswer: "Changed your mind?",
     editingHint: "This device already claimed a crown. You can change your answer.",
     comingRequired: "Pick one: Akid or La2.",
-    sideQuestLabel:
-      "Also coming to the side quest? Frozen Cherry, Saturday 6 PM.",
     notConfigured:
       "RSVP is not wired up yet. Add the Supabase keys to .env.local and restart the dev server.",
     duplicate: "This royal is already on the wall",

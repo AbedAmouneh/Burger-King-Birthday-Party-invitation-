@@ -31,7 +31,6 @@ export function RsvpForm() {
   const [name, setName] = useState("");
   const [coming, setComing] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
-  const [sideQuest, setSideQuest] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -72,7 +71,6 @@ export function RsvpForm() {
         token: mine.token,
         coming,
         message: cleanMessage,
-        sideQuest,
       });
       if (!result.ok) {
         setStatus("idle");
@@ -92,7 +90,6 @@ export function RsvpForm() {
           name: trimmed,
           coming,
           message: cleanMessage,
-          side_quest: sideQuest,
           edit_token_hash,
         })
         .select("id, name, coming, message, side_quest, created_at")
@@ -218,23 +215,6 @@ export function RsvpForm() {
           placeholder={copy.rsvp.messagePlaceholder}
           className="font-display mt-1.5 w-full resize-none rounded-sm border-[3px] border-brown bg-white px-3 py-2.5 text-base text-brown"
         />
-      </label>
-
-      {/* The side quest is a different night, so it is a separate question
-          rather than being folded into "coming". */}
-      <label className="mt-4 flex items-start gap-3 rounded-sm border-[3px] border-brown bg-orange/15 px-3 py-3">
-        <input
-          type="checkbox"
-          checked={sideQuest}
-          onChange={(e) => {
-            setSideQuest(e.target.checked);
-            play("crunch");
-          }}
-          className="mt-0.5 h-5 w-5 shrink-0 accent-flame"
-        />
-        <span className="font-display text-base leading-snug text-brown">
-          {copy.rsvp.sideQuestLabel}
-        </span>
       </label>
 
       {error ? (
